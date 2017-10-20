@@ -1,0 +1,89 @@
+version: '3.3'
+services:
+
+  drone-server:
+    image: drone/drone
+    networks:
+      backend:
+        ipv4_address: 172.28.1.101
+    ports:
+      # - 80:80
+      # - 443:443
+      - 8000:8000
+      # - 9000:9000
+    volumes:
+      - drone-data:/var/lib/drone/
+      # - ./ssl/server.crt:/etc/certs/drone.xc725.wang/server.crt
+      # - ./ssl/server.key:/etc/certs/drone.xc725.wang/server.key
+  #  restart: always
+    environment:
+      - DRONE_OPEN=true
+      - DRONE_HOST=https://drone.xc725.wang
+      - DRONE_GOGS=true
+      - DRONE_GOGS_URL=https://git.xc725.wang
+      # - DRONE_GITHUB=true
+      # - DRONE_GITHUB_CLIENT=afff1c7c313e10c7550b
+      # - DRONE_GITHUB_SECRET=7650e2abaf0e8100cfd2dd543fe8f094560e5d10
+      - DRONE_SECRET=khs1994
+      # - DRONE_SERVER_CERT=/etc/certs/drone.xc725.wang/server.crt
+      # - DRONE_SERVER_KEY=/etc/certs/drone.xc725.wang/server.key
+    extra_hosts:
+      - "git.xc725.wang:${PUBLIC_IP}"
+
+  drone-agent:
+    image: drone/agent
+    networks:
+      backend:
+        ipv4_address: 172.28.1.102
+    command: agent
+    # restart: always
+    depends_on:
+      - drone-server
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - DRONE_SERVER=drone-server:9000
+      - DRONE_SECRET=khs1994
+    dns: 114.114.114.114
+    extra_hosts:
+      - "git.xc725.wang:${PUBLIC_IP}"
+
+  gogs:
+    image: gogs/gogs
+    networks:
+      backend:
+        ipv4_address: 172.28.1.103
+    ports:
+      - "22:22"
+      - "10080:3000"
+    volumes:
+      - gogs-data:/data
+      - ./app.prod.ini:/data/gogs/conf/app.ini
+      - ./ssl:/data/ssl
+    extra_hosts:
+      - "drone.xc725.wang:${PUBLIC_IP}"
+
+  mysql:
+    image: mysql:5.7.19
+    networks:
+      backend:
+        ipv4_address: 172.28.1.104
+    env_file: .env
+    # ports:
+      # - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+networks:
+  backend:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        -
+          subnet: 172.28.1.1/24
+
+volumes:
+  gogs-data:
+  mysql-data:
+  drone-data:
