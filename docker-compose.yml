@@ -2,7 +2,7 @@ version: '3.3'
 services:
 
   drone-server:
-    image: drone/drone
+    image: drone/drone:${DRONE_VERSION}
     networks:
       backend:
         ipv4_address: 172.28.1.101
@@ -13,8 +13,8 @@ services:
       # - 9000:9000
     volumes:
       - drone-data:/var/lib/drone/:rw
-      # - ./ssl/server.crt:/etc/certs/drone.xc725.wang/server.crt
-      # - ./ssl/server.key:/etc/certs/drone.xc725.wang/server.key
+      # - ./conf.d/ssl/drone.xc725.wang.crt:/etc/certs/drone.xc725.wang.crt
+      # - ./conf.d/ssl/drone.xc725.wang.key:/etc/certs/drone.xc725.wang.key
   #  restart: always
     environment:
       - DRONE_OPEN=true
@@ -25,14 +25,13 @@ services:
       # - DRONE_GITHUB_CLIENT=afff1c7c313e10c7550b
       # - DRONE_GITHUB_SECRET=7650e2abaf0e8100cfd2dd543fe8f094560e5d10
       - DRONE_SECRET=khs1994
-      # - DRONE_SERVER_CERT=/etc/certs/drone.xc725.wang/server.crt
-      # - DRONE_SERVER_KEY=/etc/certs/drone.xc725.wang/server.key
+      # - DRONE_SERVER_CERT=/etc/certs/drone.xc725.wang.crt
+      # - DRONE_SERVER_KEY=/etc/certs/drone.xc725.wang.key
 
   drone-agent:
-    image: drone/agent
+    image: drone/agent:${DRONE_VERSION}
     networks:
       backend:
-        ipv4_address: 172.28.1.102
     command: agent
     # restart: always
     depends_on:
@@ -48,14 +47,14 @@ services:
     image: gogs/gogs
     networks:
       backend:
-        ipv4_address: 172.28.1.103
+        ipv4_address: 172.28.1.102
     ports:
       - "22:22"
       - "127.0.0.1:10080:3000"
     volumes:
       - gogs-data:/data:rw
       - ./gogs/app.prod.ini:/data/gogs/conf/app.ini:ro
-      - ./ssl:/data/ssl:rw
+      - ./conf.d/ssl:/data/ssl:rw
     extra_hosts:
       - "drone.xc725.wang:${PUBLIC_IP}"
 
@@ -63,7 +62,7 @@ services:
     image: mysql:${MYSQL_VERSION}
     networks:
       backend:
-        ipv4_address: 172.28.1.104
+        ipv4_address: 172.28.1.103
     env_file: .env
     # ports:
       # - "3306:3306"
@@ -74,11 +73,21 @@ services:
     image: registry
     networks:
       backend:
-        ipv4_address: 172.28.1.105
+        ipv4_address: 172.28.1.104
     ports:
       - "127.0.0.1:5000:5000"
     volumes:
       - registry-data:/var/lib/registry:rw
+
+  # nginx:
+  #   image: khs1994/nginx:${NGINX_VERSION}
+  #   networks:
+  #     backend:
+  #   env_file: .env
+  #   ports:
+  #     - "443:443"
+  #   volumes:
+  #     - ./conf.d:/etc/nginx/conf.d
 
 networks:
   backend:
