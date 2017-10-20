@@ -9,10 +9,10 @@ services:
     ports:
       # - 80:80
       # - 443:443
-      - 8000:8000
+      - "127.0.0.1:8000:8000"
       # - 9000:9000
     volumes:
-      - drone-data:/var/lib/drone/
+      - drone-data:/var/lib/drone/:rw
       # - ./ssl/server.crt:/etc/certs/drone.xc725.wang/server.crt
       # - ./ssl/server.key:/etc/certs/drone.xc725.wang/server.key
   #  restart: always
@@ -27,8 +27,6 @@ services:
       - DRONE_SECRET=khs1994
       # - DRONE_SERVER_CERT=/etc/certs/drone.xc725.wang/server.crt
       # - DRONE_SERVER_KEY=/etc/certs/drone.xc725.wang/server.key
-    extra_hosts:
-      - "git.xc725.wang:${PUBLIC_IP}"
 
   drone-agent:
     image: drone/agent
@@ -40,13 +38,11 @@ services:
     depends_on:
       - drone-server
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:rw
     environment:
       - DRONE_SERVER=drone-server:9000
       - DRONE_SECRET=khs1994
     dns: 114.114.114.114
-    extra_hosts:
-      - "git.xc725.wang:${PUBLIC_IP}"
 
   gogs:
     image: gogs/gogs
@@ -55,16 +51,16 @@ services:
         ipv4_address: 172.28.1.103
     ports:
       - "22:22"
-      - "10080:3000"
+      - "127.0.0.1:10080:3000"
     volumes:
-      - gogs-data:/data
-      - ./app.prod.ini:/data/gogs/conf/app.ini
-      - ./ssl:/data/ssl
+      - gogs-data:/data:rw
+      - ./gogs/app.prod.ini:/data/gogs/conf/app.ini:ro
+      - ./ssl:/data/ssl:rw
     extra_hosts:
       - "drone.xc725.wang:${PUBLIC_IP}"
 
   mysql:
-    image: mysql:5.7.19
+    image: mysql:${MYSQL_VERSION}
     networks:
       backend:
         ipv4_address: 172.28.1.104
@@ -72,7 +68,17 @@ services:
     # ports:
       # - "3306:3306"
     volumes:
-      - mysql-data:/var/lib/mysql
+      - mysql-data:/var/lib/mysql:rw
+
+  registry:
+    image: registry
+    networks:
+      backend:
+        ipv4_address: 172.28.1.105
+    ports:
+      - "127.0.0.1:5000:5000"
+    volumes:
+      - registry-data:/var/lib/registry:rw
 
 networks:
   backend:
@@ -87,3 +93,4 @@ volumes:
   gogs-data:
   mysql-data:
   drone-data:
+  registry-data:
