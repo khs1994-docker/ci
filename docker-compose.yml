@@ -9,7 +9,7 @@ services:
     ports:
       # - 80:80
       # - 443:443
-      - "127.0.0.1:8000:8000"
+      - "${PUBLIC_IP}:8000:8000"
       # - 9000:9000
     volumes:
       - drone-data:/var/lib/drone/:rw
@@ -50,7 +50,7 @@ services:
         ipv4_address: 172.28.1.102
     ports:
       - "22:22"
-      - "127.0.0.1:10080:3000"
+      - "${PUBLIC_IP}:10080:3000"
     volumes:
       - gogs-data:/data:rw
       - ./gogs/app.prod.ini:/data/gogs/conf/app.ini:ro
@@ -58,16 +58,16 @@ services:
     extra_hosts:
       - "drone.xc725.wang:${PUBLIC_IP}"
 
-  mysql:
-    image: mysql:${MYSQL_VERSION}
-    networks:
-      backend:
-        ipv4_address: 172.28.1.103
-    env_file: .env
-    # ports:
-      # - "3306:3306"
-    volumes:
-      - mysql-data:/var/lib/mysql:rw
+  # mysql:
+  #   image: mysql:${MYSQL_VERSION}
+  #   networks:
+  #     backend:
+  #       ipv4_address: 172.28.1.103
+  #   env_file: .env
+  #   # ports:
+  #     # - "3306:3306"
+  #   volumes:
+  #     - mysql-data:/var/lib/mysql:rw
 
   registry:
     image: registry
@@ -75,7 +75,7 @@ services:
       backend:
         ipv4_address: 172.28.1.104
     ports:
-      - "127.0.0.1:5000:5000"
+      - "${PUBLIC_IP}:5000:5000"
     volumes:
       - registry-data:/var/lib/registry:rw
 

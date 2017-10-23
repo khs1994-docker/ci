@@ -18,14 +18,14 @@ Drone 拉取代码完成编译，部署
 
 ## 新建数据库
 
-新建 gogs 数据库（供 Gogs 使用）
+新建 `gogs` 数据库（供 Gogs 使用）
 
 ```bash
-$ docker-compose -f docker-compose.mysql.yml up -d
+$ docker-compose up -d mysql
 $ docker-compose exec mysql bash
 $ mysql -uroot -p
 $ create database gogs;
-$ docker-compose -f docker-compose.mysql.yml down
+$ docker-compose down
 ```
 
 ## 准备 SSL 证书
