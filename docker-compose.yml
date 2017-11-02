@@ -15,33 +15,24 @@ services:
       - drone-data:/var/lib/drone/:rw
       # - ./conf.d/ssl/drone.xc725.wang.crt:/etc/certs/drone.xc725.wang.crt
       # - ./conf.d/ssl/drone.xc725.wang.key:/etc/certs/drone.xc725.wang.key
-  #  restart: always
+    restart: always
+    env_file: .env
     environment:
-      - DRONE_OPEN=true
-      - DRONE_HOST=https://drone.xc725.wang
-      - DRONE_GOGS=true
-      - DRONE_GOGS_URL=https://git.xc725.wang
-      # - DRONE_GITHUB=true
-      # - DRONE_GITHUB_CLIENT=afff1c7c313e10c7550b
-      # - DRONE_GITHUB_SECRET=7650e2abaf0e8100cfd2dd543fe8f094560e5d10
-      - DRONE_SECRET=khs1994
-      # - DRONE_SERVER_CERT=/etc/certs/drone.xc725.wang.crt
-      # - DRONE_SERVER_KEY=/etc/certs/drone.xc725.wang.key
+      - DRONE_HOST=https://drone.${DOMAIN}
+      - DRONE_GOGS_URL=https://git.${DOMAIN}
 
   drone-agent:
     image: drone/agent:${DRONE_VERSION}
     networks:
       backend:
     command: agent
-    # restart: always
+    restart: always
     depends_on:
       - drone-server
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:rw
-    environment:
-      - DRONE_SERVER=drone-server:9000
-      - DRONE_SECRET=khs1994
-    dns: 114.114.114.114
+    env_file: .env
+    dns: ${DNS}
 
   gogs:
     image: gogs/gogs
@@ -56,7 +47,7 @@ services:
       - ./gogs/app.prod.ini:/data/gogs/conf/app.ini:ro
       - ./conf.d/ssl:/data/ssl:rw
     extra_hosts:
-      - "drone.xc725.wang:${PUBLIC_IP}"
+      - "drone.${DOMAIN}:${PUBLIC_IP}"
 
   # mysql:
   #   image: mysql:${MYSQL_VERSION}
@@ -100,6 +91,6 @@ networks:
 
 volumes:
   gogs-data:
-  mysql-data:
+  # mysql-data:
   drone-data:
   registry-data:
