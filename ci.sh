@@ -10,7 +10,8 @@ case $1 in
        cp update.example.js update.js
        cp update.example.sh update.sh
     fi
-    echo "修改端口号，密钥之后在 webhooks/ 执行 docker-compose up -d"
+    echo -e "修改端口号，密钥之后在 ./webhooks 执行\n
+$ docker-compose up -d\n"
   ;;
   * )
   echo -e "khs1994-docker/ci Powered By Gogs & Drone & Registry
