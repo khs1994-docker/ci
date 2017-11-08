@@ -56,6 +56,7 @@ services:
       # - "3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql:rw
+    command: ["mysqld","--character-set-server=utf8mb4"]
 
   registry:
     image: registry
