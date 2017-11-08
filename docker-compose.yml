@@ -5,7 +5,7 @@ services:
     image: drone/drone:${DRONE_VERSION}
     networks:
       backend:
-        ipv4_address: 172.28.1.101
+        # ipv4_address: 172.28.1.101
     ports:
       # - 80:80
       # - 443:443
@@ -13,8 +13,7 @@ services:
       # - 9000:9000
     volumes:
       - drone-data:/var/lib/drone/:rw
-      # - ./conf.d/ssl/drone.xc725.wang.crt:/etc/certs/drone.xc725.wang.crt
-      # - ./conf.d/ssl/drone.xc725.wang.key:/etc/certs/drone.xc725.wang.key
+      # - ${SSL_PATH}:/etc/certs
     restart: always
     env_file: .env
     environment:
@@ -38,40 +37,37 @@ services:
     image: gogs/gogs
     networks:
       backend:
-        ipv4_address: 172.28.1.102
     ports:
       - "22:22"
       - "${PUBLIC_IP}:10080:3000"
     volumes:
       - gogs-data:/data:rw
       - ./gogs/app.prod.ini:/data/gogs/conf/app.ini:ro
-      - ./conf.d/ssl:/data/ssl:rw
+      - ${SSL_PATH}:/data/ssl:rw
     extra_hosts:
       - "drone.${DOMAIN}:${PUBLIC_IP}"
 
-  # mysql:
-  #   image: mysql:${MYSQL_VERSION}
-  #   networks:
-  #     backend:
-  #       ipv4_address: 172.28.1.103
-  #   env_file: .env
-  #   # ports:
-  #     # - "3306:3306"
-  #   volumes:
-  #     - mysql-data:/var/lib/mysql:rw
+  mysql:
+    image: mysql:${MYSQL_VERSION}
+    networks:
+      backend:
+    env_file: .env
+    # ports:
+      # - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql:rw
 
   registry:
     image: registry
     networks:
       backend:
-        ipv4_address: 172.28.1.104
     ports:
       - "${PUBLIC_IP}:5000:5000"
     volumes:
       - registry-data:/var/lib/registry:rw
 
   # nginx:
-  #   image: khs1994/nginx:${NGINX_VERSION}
+  #   image: khs1994/nginx:${NGINX_VERSION}-alpine
   #   networks:
   #     backend:
   #   env_file: .env
@@ -91,6 +87,6 @@ networks:
 
 volumes:
   gogs-data:
-  # mysql-data:
+  mysql-data:
   drone-data:
   registry-data:
