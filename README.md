@@ -10,11 +10,11 @@ Drone 拉取代码完成编译，部署
 
 ## Nginx
 
-一种是使用本机的 Nginx，一种是直接使用本项目的 Nginx
+一种是使用本机的 Nginx，一种是直接使用本项目的 Nginx。
 
-本项目 Nginx 配置文件默认为 `使用本机 nginx`，使用时将 `conf.d` 中的文件复制到本机 nginx 配置文件夹（一般情况下为 `/etc/nginx/conf.d`）。
+本项目 Nginx 配置文件默认为 `使用本机 nginx`，使用时将 `conf.d` 中的 `local` `ssl` `auth` 文件复制到本机 nginx 配置文件夹（一般情况下为 `/etc/nginx/conf.d`）。
 
-使用本项目的 Nginx 请在 docker-compose.yml 文件中将 nginx 部分的注释取消，并修改 `conf.d/*.conf` 的内容，里面有详细的注释，请把相关内容注释取消即可。
+使用本项目的 Nginx 请在 docker-compose.yml 文件中将 nginx 部分的注释取消。
 
 ## 新建数据库
 
@@ -22,8 +22,7 @@ Drone 拉取代码完成编译，部署
 
 ```bash
 $ docker-compose up -d mysql
-$ docker-compose exec mysql bash
-$ mysql -uroot -p
+$ docker-compose exec mysql mysql -uroot -pmytest
 $ create database gogs;
 $ docker-compose down
 ```
@@ -41,8 +40,8 @@ $ docker-compose down
 # Gogs
 
 ```bash
-cd gogs
-cp app.ini app.prod.ini
+$ cd gogs
+$ cp app.ini app.prod.ini
 ```
 
 修改 `app.prod.ini`：
