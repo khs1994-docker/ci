@@ -24,7 +24,8 @@ Drone 拉取代码完成编译，部署
 $ docker-compose up -d mysql
 $ docker-compose exec mysql mysql -uroot -pmytest
 $ create database gogs;
-$ docker-compose down
+$ exit
+$ docker-compose up -d
 ```
 
 ## 准备 SSL 证书

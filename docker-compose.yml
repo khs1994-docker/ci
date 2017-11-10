@@ -45,7 +45,7 @@ services:
       - ./gogs/app.prod.ini:/data/gogs/conf/app.ini:ro
       - ${SSL_PATH}:/data/ssl:rw
     extra_hosts:
-      - "drone.${DOMAIN}:${PUBLIC_IP}"
+      - "drone.${DOMAIN}:${DRONE_IP}"
 
   mysql:
     image: mysql:${MYSQL_VERSION}
@@ -76,6 +76,13 @@ services:
   #     - "443:443"
   #   volumes:
   #     - ./conf.d:/etc/nginx/conf.d
+
+  # webhooks:
+  #   build:
+  #     context: webhooks
+  #   image: khs1994/ci
+  #   ports:
+  #     - "7777:7777"
 
 networks:
   backend:
