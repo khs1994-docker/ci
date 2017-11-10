@@ -1,0 +1,85 @@
+version: '3.3'
+services:
+
+  drone-server:
+    image: drone/drone:alpine
+    networks:
+      backend:
+    ports:
+      # - 80:80
+      # - 443:443
+      - "8000:8000"
+      # - 9000:9000
+    volumes:
+      - drone-data:/var/lib/drone/:rw
+      # - ${SSL_PATH}:/etc/certs
+    restart: always
+    env_file: .env
+    environment:
+      - DRONE_HOST=https://drone.xc725.wang
+      - DRONE_GOGS_URL=https://git.xc725.wang
+
+  drone-agent:
+    image: drone/agent:alpine
+    networks:
+      backend:
+    command: agent
+    restart: always
+    depends_on:
+      - drone-server
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+    env_file: .env
+
+  gogs:
+    image: gogs/gogs
+    networks:
+      backend:
+    ports:
+      - "22:22"
+      - "10080:3000"
+    volumes:
+      - gogs-data:/data:rw
+      - ./gogs/app.prod.ini:/data/gogs/conf/app.ini:ro
+      - ./conf.d/ssl:/data/ssl:rw
+    extra_hosts:
+      - "drone.xc725.wang:${PUBLIC_IP}"
+
+  mysql:
+    image: mysql:5.7.20
+    networks:
+      backend:
+    env_file: .env
+    # ports:
+      # - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql:rw
+    command: ["mysqld","--character-set-server=utf8mb4"]
+
+  registry:
+    image: registry
+    networks:
+      backend:
+    ports:
+      - "5000:5000"
+    volumes:
+      - registry-data:/var/lib/registry:rw
+
+  nginx:
+    image: khs1994/nginx:1.13.6-alpine
+    networks:
+      backend:
+    env_file: .env
+    ports:
+      - "443:443"
+    volumes:
+      - ./conf.d:/etc/nginx/conf.d
+
+networks:
+  backend:
+
+volumes:
+  gogs-data:
+  mysql-data:
+  drone-data:
+  registry-data:
