@@ -21,8 +21,7 @@ Drone 拉取代码完成编译，部署
 新建 `gogs` 数据库（供 Gogs 使用）
 
 ```bash
-$ docker-compose up -d mysql
-$ docker-compose exec mysql mysql -uroot -pmytest
+$ ./ci.sh
 $ create database gogs;
 $ exit
 $ docker-compose up -d

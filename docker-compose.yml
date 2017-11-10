@@ -38,7 +38,7 @@ services:
     networks:
       backend:
     ports:
-      - "22:22"
+      - "${SSH_PORT}:22"
       - "${PUBLIC_IP}:10080:3000"
     volumes:
       - gogs-data:/data:rw
