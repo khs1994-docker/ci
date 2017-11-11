@@ -6,15 +6,17 @@
 
 Drone 拉取代码完成编译，部署
 
-# Overview
-
-## Nginx
+# Nginx
 
 一种是使用本机的 Nginx，一种是直接使用本项目的 Nginx。
 
 本项目 Nginx 配置文件默认为 `使用本机 nginx`，使用时将 `conf.d` 中的 `local` `ssl` `auth` 文件复制到本机 nginx 配置文件夹（一般情况下为 `/etc/nginx/conf.d`）。
 
 使用本项目的 Nginx 请在 docker-compose.yml 文件中将 nginx 部分的注释取消。
+
+# 开发环境
+
+Gogs + Drone + Docker Registry
 
 ## 新建数据库
 
@@ -33,22 +35,23 @@ $ docker-compose up -d
 * drone.xc725.wang
 * docker.xc725.wang
 
+## Gogs
+
+修改 `./gogs/app.prod.ini` 数据库密码、邮箱服务器密码等
+
+# 生产环境
+
+```bash
+$ ./ci.sh production
+```
+
+GitHub + Drone + 腾讯云容器服务镜像仓库(Tencent Hub)
+
 # Drone
 
 参考 [官方文档](http://docs.drone.io/)，并仔细查看 `docker-compose.yml` 文件。
 
-# Gogs
-
-```bash
-$ cd gogs
-$ cp app.ini app.prod.ini
-```
-
-修改 `app.prod.ini`：
-
-改数据库密码、邮箱服务器密码等
-
-# 注意
+# 本地环境注意事项
 
 Drone 使用新的容器来拉取 git 代码（Drone 启动的容器不能配置 host），这就要求 `git 服务器` 必须是「公网地址」（即公共 DNS 能够解析该 `git 网址`），当然也可以在 docker 的 daemon.json 文件中定义私有 `DNS 服务器`，来将 `git 服务器` 指向私有地址。
 
