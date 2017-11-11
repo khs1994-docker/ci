@@ -9,6 +9,8 @@ if [ ! -f ".env" ];then cp .env.example .env; cp update.example.js update.js; cp
 
 cd ../
 
+if [ $1 = "production" ];then exit 0; fi
+
 docker-compose up -d mysql
 
 docker-compose exec mysql mysql -uroot -pmytest

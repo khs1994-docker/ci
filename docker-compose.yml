@@ -30,6 +30,7 @@ services:
       - drone-server
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:rw
+    env_file: .env
     environment:
       - DRONE_HOST=https://drone.${DOMAIN}
       - DRONE_SERVER=drone-server:9000

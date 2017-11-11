@@ -32,6 +32,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:rw
     environment:
+      - DRONE_SECRET=khs1994
       - DRONE_HOST=https://drone.${PRO_DOMAIN}
       - DRONE_SERVER=drone-server:9000
     dns: ${DNS}
