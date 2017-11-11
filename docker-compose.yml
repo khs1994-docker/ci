@@ -22,9 +22,9 @@ services:
 
   drone-agent:
     image: drone/agent:${DRONE_VERSION}
+    # command: agent
     networks:
       backend:
-    command: agent
     restart: always
     depends_on:
       - drone-server
