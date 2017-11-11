@@ -9,6 +9,5 @@ services:
     volumes:
       - ~/.ssh:/root/.ssh:rw
       - /data/lnmp:/data/lnmp:rw
-      - ./:/data/lnmp/ci:rw  
     ports:
       - "${YOUR_PORT}:7777"
