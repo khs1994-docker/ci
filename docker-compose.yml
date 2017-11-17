@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.4'
 services:
 
   drone-server:
@@ -16,13 +16,9 @@ services:
       # - ${SSL_PATH}:/etc/certs
     restart: always
     env_file: .env
-    environment:
-      - DRONE_HOST=https://drone.${DOMAIN}
-      - DRONE_GOGS_URL=https://git.${DOMAIN}
 
   drone-agent:
     image: drone/agent:${DRONE_VERSION}
-    # command: agent
     networks:
       backend:
     restart: always
@@ -30,9 +26,8 @@ services:
       - drone-server
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:rw
-    env_file: .env
     environment:
-      - DRONE_HOST=https://drone.${DOMAIN}
+      - DRONE_SECRET=${DRONE_SECRET}
       - DRONE_SERVER=drone-server:9000
     dns: ${DNS}
 

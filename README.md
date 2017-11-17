@@ -1,3 +1,5 @@
+[![GitHub stars](https://img.shields.io/github/stars/khs1994-docker/ci.svg?style=social&label=Stars)](https://github.com/khs1994-docker/ci)
+
 # 如何工作
 
 本地制作 Docker 镜像推送到私有仓库（Docker Registry）
@@ -5,6 +7,12 @@
 本地开发，推送到 Gogs
 
 Drone 拉取代码完成编译，部署
+
+# 示例
+
+* [Hexo](https://github.com/khs1994-docker/drone-demo-hexo)
+
+* [Gitbook](https://github.com/khs1994-docker/drone-demo-gitbook)
 
 # Nginx
 
@@ -17,6 +25,8 @@ Drone 拉取代码完成编译，部署
 # 开发环境
 
 Gogs + Drone + Docker Registry
+
+备注：0.8 版本的 Drone 在使用 coding.net 时出现问题，已经反馈给两方，但没有回应。不知道是我配置问题还是什么，暂时放弃测试。
 
 ## 新建数据库
 
@@ -41,15 +51,24 @@ $ docker-compose up -d
 
 # 生产环境
 
+GitHub + Drone + 腾讯云容器服务镜像仓库(Tencent Hub)
+
+由于本人腾讯云服务器配置较低，能用外部服务尽量用外部服务，可能在未来配置较高时自己搭建私有服务。
+
 ```bash
 $ ./ci.sh production
 ```
 
-GitHub + Drone + 腾讯云容器服务镜像仓库(Tencent Hub)
-
 # Drone
 
 参考 [官方文档](http://docs.drone.io/)，并仔细查看 `docker-compose.yml` 文件。
+
+
+## 封闭注册
+
+请在 `docker-compose.prod.yml` 中将 `- DRONE_ADMIN=khs1994,khs1994-merge-robot` 替换为你的 GitHub 用户名。
+
+关于用户管理请查看 [官方文档](http://docs.drone.io/zh/user-registration/)
 
 # 本地环境注意事项
 

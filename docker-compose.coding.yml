@@ -1,0 +1,44 @@
+version: '3.4'
+services:
+
+
+# http://docs.drone.io/install-for-coding
+
+
+# drone-server_1  | time="2017-11-17T04:12:04Z" level=fatal msg="version control system not configured"
+# drone-agent_1   | {"time":"2017-11-17T04:12:05Z","level":"debug","message":"request next execution"}
+# ci_drone-server_1 exited with code 1
+# drone-server_1  | time="2017-11-17T04:12:04Z" level=fatal msg="version control system not configured"
+# drone-server_1  | time="2017-11-17T04:12:05Z" level=fatal msg="version control system not configured"
+# drone-server_1  | time="2017-11-17T04:12:07Z" level=fatal msg="version control system not configured"
+# drone-agent_1   | INFO: 2017/11/17 04:12:07 grpc: addrConn.resetTransport failed to create client transport: connection error: desc = "transport: Error while dialing dial tcp 172.19.0.2:9000: getsockopt: connection refused"; Reconnecting to {drone-server:9000 <nil>}
+# drone-agent_1   | INFO: 2017/11/17 04:12:07 grpc: addrConn.resetTransport failed to create client transport: connection error: desc = "transport: Error while dialing dial tcp 172.19.0.2:9000: getsockopt: connection refused"; Reconnecting to {drone-server:9000 <nil>}
+
+  drone-server:
+    image: drone/drone:0.8
+    ports:
+      - 80:8000
+    volumes:
+      - drone-data:/var/lib/drone/
+    restart: always
+    environment:
+      - DRONE_OPEN=true
+      - DRONE_HOST=192.168.199.100
+      - DRONE_CODING=true
+      - DRONE_CODING_CLIENT=8108cbd0c3962290d547d0013df32e2e
+      - DRONE_CODING_SECRET=a482a61eace43099979db9fc9f86cde7ad1fc6d7
+      - DRONE_SECRET=${DRONE_SECRET}
+
+  drone-agent:
+    image: drone/agent:0.8
+    restart: always
+    depends_on:
+      - drone-server
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - DRONE_SERVER=drone-server:9000
+      - DRONE_SECRET=${DRONE_SECRET}
+
+volumes:
+  drone-data:
