@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.4'
 services:
 
   gogs:
@@ -19,7 +19,7 @@ services:
     image: mysql:5.7.20
     networks:
       backend:
-    env_file: .env
+    env_file: env/mysql.env
     # ports:
       # - "3306:3306"
     volumes:
@@ -43,4 +43,4 @@ services:
   #   ports:
   #     - "443:443"
   #   volumes:
-  #     - ./conf.d:/etc/nginx/conf.d 
+  #     - ./conf.d:/etc/nginx/conf.d

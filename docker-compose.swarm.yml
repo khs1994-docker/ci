@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.4'
 services:
 
   drone-server:
@@ -14,8 +14,10 @@ services:
       - drone-data:/var/lib/drone/:rw
       # - ${SSL_PATH}:/etc/certs
     restart: always
-    env_file: .env
     environment:
+      - DRONE_SECRET=khs1994
+      - DRONE_OPEN=true
+      - DRONE_GOGS=true
       - DRONE_HOST=https://drone.xc725.wang
       - DRONE_GOGS_URL=https://git.xc725.wang
 
@@ -29,7 +31,9 @@ services:
       - drone-server
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:rw
-    env_file: .env
+    environment:
+      - DRONE_SECRET=khs1994
+      - DRONE_SERVER=drone-server:9000
 
   gogs:
     image: gogs/gogs
@@ -49,7 +53,7 @@ services:
     image: mysql:5.7.20
     networks:
       backend:
-    env_file: .env
+    env_file: env/mysql.env
     # ports:
       # - "3306:3306"
     volumes:
