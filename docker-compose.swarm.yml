@@ -15,10 +15,10 @@ services:
       # - ${SSL_PATH}:/etc/certs
     restart: always
     environment:
+      - DRONE_HOST=https://drone.xc725.wang
       - DRONE_SECRET=khs1994
       - DRONE_OPEN=true
       - DRONE_GOGS=true
-      - DRONE_HOST=https://drone.xc725.wang
       - DRONE_GOGS_URL=https://git.xc725.wang
 
   drone-agent:
