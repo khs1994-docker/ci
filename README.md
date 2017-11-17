@@ -63,6 +63,13 @@ $ ./ci.sh production
 
 参考 [官方文档](http://docs.drone.io/)，并仔细查看 `docker-compose.yml` 文件。
 
+
+## 封闭注册
+
+请在 `docker-compose.prod.yml` 中将 `- DRONE_ADMIN=khs1994,khs1994-merge-robot` 替换为你的 GitHub 用户名。
+
+关于用户管理请查看 [官方文档](http://docs.drone.io/zh/user-registration/)
+
 # 本地环境注意事项
 
 Drone 使用新的容器来拉取 git 代码（Drone 启动的容器不能配置 host），这就要求 `git 服务器` 必须是「公网地址」（即公共 DNS 能够解析该 `git 网址`），当然也可以在 docker 的 daemon.json 文件中定义私有 `DNS 服务器`，来将 `git 服务器` 指向私有地址。
