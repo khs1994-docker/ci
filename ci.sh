@@ -12,14 +12,17 @@ if [ ! -f update.sh ];then cp update.example.sh update.sh; fi
 cd ../
 
 if [ "$1" = "production" ];then echo "You are in Production, Please exec\n"; echo "$ docker-compose -f docker-compose.prod.yml up -d\n"; exit 0; fi
+if [ "$1" = "swarm" ];then echo -e "\nYou are in Docker Swarm, Please exec\n\n$ docker swarm init\n$ docker stack deploy -c docker-compose.swarm.yml ci\n"; exit 0; fi
 
-docker-compose up -d mysql
+command -v docker-compose > /dev/null 2>&1
 
-docker-compose exec mysql mysql -uroot -pmytest
+if [ $? -ne 0 ];then echo "docker-compose not install"; exit 1; fi
 
-# create database gogs;
-# exit
-# docker-compose up -d
-
-echo "You are in Development, Please exec\n"
-echo "$ docker-compose up -d\n"
+echo
+echo "You are in Local Development,please exec"
+echo "$ docker-compose up -d mysql"
+echo "$ docker-compose exec mysql mysql -uroot -pmytest"
+echo "CREATE DATABASE gogs;"
+echo "$ exit"
+echo "$ docker-compose up -d"
+echo

@@ -30,7 +30,7 @@ Gogs + Drone + Docker Registry
 
 ## 新建数据库
 
-新建 `gogs` 数据库（供 Gogs 使用）
+使用 Gogs 必须新建 `gogs` 数据库
 
 ```bash
 $ ./ci.sh
@@ -75,6 +75,27 @@ $ ./ci.sh production
 Drone 使用新的容器来拉取 git 代码（Drone 启动的容器不能配置 host），这就要求 `git 服务器` 必须是「公网地址」（即公共 DNS 能够解析该 `git 网址`），当然也可以在 docker 的 daemon.json 文件中定义私有 `DNS 服务器`，来将 `git 服务器` 指向私有地址。
 
 遇到这个问题的人看一下就明白了，这里不再赘述。
+
+# Docker Swarm
+
+```bash
+
+$ docker-machine create \
+      -d virtualbox \
+      --engine-opt dns=114.114.114.114 \
+      --engine-registry-mirror https://registry.docker-cn.com \
+      --virtualbox-memory 2048 \
+      --virtualbox-cpu-count 2 \
+      ci
+
+$ docker-machine ssh ci
+
+$ git clone -b master --depth=1 https://github.com/khs1994-docker/ci.git
+
+$ cd ci
+
+$ ./ci.sh swarm
+```
 
 # More Information
 

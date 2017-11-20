@@ -1,5 +1,16 @@
 version: '3.4'
 services:
+  
+  visualizer:
+    image: dockersamples/visualizer:stable
+    ports:
+      - "8080:8080"
+    stop_grace_period: 1m30s
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
 
   drone-server:
     image: drone/drone:alpine
@@ -25,7 +36,6 @@ services:
     image: drone/agent:alpine
     networks:
       backend:
-    command: agent
     restart: always
     depends_on:
       - drone-server
@@ -40,7 +50,7 @@ services:
     networks:
       backend:
     ports:
-      - "22:22"
+      - "8022:22"
       - "10080:3000"
     volumes:
       - gogs-data:/data:rw
@@ -78,6 +88,10 @@ services:
       - "443:443"
     volumes:
       - ./conf.d:/etc/nginx/conf.d
+    depends_on:
+      - registry
+      - gogs
+      - drone-server
 
 networks:
   backend:
