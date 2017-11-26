@@ -28,17 +28,6 @@ Gogs + Drone + Docker Registry
 
 备注：0.8 版本的 Drone 在使用 coding.net 时出现问题，已经反馈给两方，但没有回应。不知道是我配置问题还是什么，暂时放弃测试。
 
-## 新建数据库
-
-使用 Gogs 必须新建 `gogs` 数据库
-
-```bash
-$ ./ci.sh
-$ create database gogs;
-$ exit
-$ docker-compose up -d
-```
-
 ## 准备 SSL 证书
 
 * git.xc725.wang
