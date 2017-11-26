@@ -65,10 +65,9 @@ Drone 使用新的容器来拉取 git 代码（Drone 启动的容器不能配置
 
 遇到这个问题的人看一下就明白了，这里不再赘述。
 
-# Docker Swarm
+# Swarm mode
 
 ```bash
-
 $ docker-machine create \
       -d virtualbox \
       --engine-opt dns=114.114.114.114 \
