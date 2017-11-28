@@ -2,6 +2,7 @@
 
 if [ ! -f .env ];then cp .env.example .env; fi
 if [ ! -f app.prod.ini ];then cp gogs/app.ini gogs/app.prod.ini; fi
+if [ ! -f registry/config.yml ];then cp registry/config.default.yml registry/config.yml; fi
 
 cd webhooks
 

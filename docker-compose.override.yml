@@ -33,6 +33,7 @@ services:
     ports:
       - "5000:5000"
     volumes:
+      - ./registry/config.yml:/etc/docker/registry/config.yml:ro
       - registry-data:/var/lib/registry:rw
 
   # nginx:
