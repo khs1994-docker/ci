@@ -30,9 +30,11 @@ Gogs + Drone + Docker Registry
 
 ## 准备 SSL 证书
 
-* git.xc725.wang
-* drone.xc725.wang
-* docker.xc725.wang
+* git.t.khs1994.com
+
+* drone.t.khs1994.com
+
+* docker.t.khs1994.com
 
 ## Gogs
 
@@ -88,7 +90,11 @@ $ ./ci.sh swarm
 # More Information
 
 * [Gogs](https://github.com/gogits/gogs)
+
 * [Gogs Docker](https://github.com/gogits/gogs/tree/master/docker)
+
 * [Drone](https://github.com/drone)
+
 * [Drone Documents](http://docs.drone.io/)
+
 * [Drone Docker](https://store.docker.com/profiles/drone)

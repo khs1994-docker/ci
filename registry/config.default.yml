@@ -20,7 +20,7 @@ storage:
 #     path: /etc/docker/registry/auth/nginx.htpasswd
 http:
   addr: :5000
-  # host: https://docker.xc725.wang
+  # host: https://docker.t.khs1994.com
   headers:
     X-Content-Type-Options: [nosniff]
   # http2:

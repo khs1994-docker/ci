@@ -3,8 +3,6 @@ services:
 
   drone-server:
     image: drone/drone:${DRONE_VERSION}
-    networks:
-      backend:
     ports:
       # - 80:80
       # - 443:443
@@ -25,8 +23,6 @@ services:
 
   drone-agent:
     image: drone/agent:${DRONE_VERSION}
-    networks:
-      backend:
     restart: always
     depends_on:
       - drone-server
@@ -39,8 +35,6 @@ services:
 
   # gogs:
   #   image: gogs/gogs
-  #   networks:
-  #     backend:
   #   ports:
   #     - "${SSH_PORT}:22"
   #     - "${PUBLIC_IP}:10080:3000"
@@ -64,8 +58,6 @@ services:
   #
   # registry:
   #   image: registry
-  #   networks:
-  #     backend:
   #   ports:
   #     - "${PUBLIC_IP}:5000:5000"
   #   volumes:
@@ -73,8 +65,6 @@ services:
 
   # nginx:
   #   image: khs1994/nginx:${NGINX_VERSION}-alpine
-  #   networks:
-  #     backend:
   #   env_file: .env
   #   ports:
   #     - "443:443"
@@ -87,9 +77,6 @@ services:
   #   image: khs1994/ci
   #   ports:
   #     - "7777:7777"
-
-networks:
-  backend:
 
 volumes:
   gogs-data:

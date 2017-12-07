@@ -2,14 +2,14 @@ version: '3.4'
 services:
 
   drone-server:
-    image: drone/drone:alpine
+    image: drone/drone:${DRONE_VERSION}
     ports:
-      - 80:8000
+      - 8000:8000
     volumes:
       - drone-data:/var/lib/drone/
     restart: always
     environment:
-      - DRONE_HOST=192.168.199.100
+      - DRONE_HOST=${DRONE_HOST_PRO}
       - DRONE_GITLAB=true
       - DRONE_GITLAB_CLIENT=fe548feb7819435d8f7c9236cf4ca30c
       - DRONE_GITLAB_SECRET=232a1ef9dd9148cbbf4034eb40f9736b
@@ -17,7 +17,7 @@ services:
       - DRONE_SECRET=${DRONE_SECRET}
 
   drone-agent:
-    image: drone/agent:alpine
+    image: drone/agent:${DRONE_VERSION}
     restart: always
     depends_on:
       - drone-server
