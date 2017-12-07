@@ -3,8 +3,6 @@ services:
 
   gogs:
     image: gogs/gogs
-    networks:
-      backend:
     ports:
       - "22:22"
       - "10080:3000"
@@ -17,8 +15,6 @@ services:
 
   mysql:
     image: mysql:5.7.20
-    networks:
-      backend:
     env_file: env/mysql.env
     # ports:
       # - "3306:3306"
@@ -28,11 +24,10 @@ services:
 
   registry:
     image: registry
-    networks:
-      backend:
     ports:
       - "5000:5000"
     volumes:
+      - ./registry/config.yml:/etc/docker/registry/config.yml:ro
       - registry-data:/var/lib/registry:rw
 
   # nginx:

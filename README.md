@@ -28,22 +28,13 @@ Gogs + Drone + Docker Registry
 
 备注：0.8 版本的 Drone 在使用 coding.net 时出现问题，已经反馈给两方，但没有回应。不知道是我配置问题还是什么，暂时放弃测试。
 
-## 新建数据库
-
-新建 `gogs` 数据库（供 Gogs 使用）
-
-```bash
-$ ./ci.sh
-$ create database gogs;
-$ exit
-$ docker-compose up -d
-```
-
 ## 准备 SSL 证书
 
-* git.xc725.wang
-* drone.xc725.wang
-* docker.xc725.wang
+* git.t.khs1994.com
+
+* drone.t.khs1994.com
+
+* docker.t.khs1994.com
 
 ## Gogs
 
@@ -76,10 +67,34 @@ Drone 使用新的容器来拉取 git 代码（Drone 启动的容器不能配置
 
 遇到这个问题的人看一下就明白了，这里不再赘述。
 
+# Swarm mode
+
+```bash
+$ docker-machine create \
+      -d virtualbox \
+      --engine-opt dns=114.114.114.114 \
+      --engine-registry-mirror https://registry.docker-cn.com \
+      --virtualbox-memory 2048 \
+      --virtualbox-cpu-count 2 \
+      ci
+
+$ docker-machine ssh ci
+
+$ git clone -b master --depth=1 https://github.com/khs1994-docker/ci.git
+
+$ cd ci
+
+$ ./ci.sh swarm
+```
+
 # More Information
 
 * [Gogs](https://github.com/gogits/gogs)
+
 * [Gogs Docker](https://github.com/gogits/gogs/tree/master/docker)
+
 * [Drone](https://github.com/drone)
+
 * [Drone Documents](http://docs.drone.io/)
+
 * [Drone Docker](https://store.docker.com/profiles/drone)
