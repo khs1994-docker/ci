@@ -18,7 +18,13 @@ Drone 拉取代码完成编译，部署
 
 一种是使用本机的 Nginx，一种是直接使用本项目的 Nginx。
 
-本项目 Nginx 配置文件默认为 `使用本机 nginx`，使用时将 `conf.d` 中的 `local/*.conf` `ssl` `auth` 文件复制到本机 nginx 配置文件夹（一般情况下为 `/etc/nginx/conf.d`）。
+本项目 Nginx 配置文件默认为 `使用本机 nginx`，使用时将 `conf.d` 中的 `*.conf` `ssl` `auth` 文件复制到本机 nginx 配置文件夹（一般情况下为 `/etc/nginx/conf.d`）。
+
+修改 `/etc/hosts/`
+
+```bash
+127.0.0.1 registry drone-server gogs
+```
 
 使用本项目的 Nginx 请在 docker-compose.override.yml 文件中将 nginx 部分的注释取消。
 

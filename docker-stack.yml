@@ -1,6 +1,6 @@
 version: '3.4'
 services:
-  
+
   visualizer:
     image: dockersamples/visualizer:stable
     ports:
@@ -26,11 +26,11 @@ services:
       # - ${SSL_PATH}:/etc/certs
     restart: always
     environment:
-      - DRONE_HOST=https://drone.xc725.wang
+      - DRONE_HOST=https://drone.t.khs1994.com
       - DRONE_SECRET=khs1994
       - DRONE_OPEN=true
       - DRONE_GOGS=true
-      - DRONE_GOGS_URL=https://git.xc725.wang
+      - DRONE_GOGS_URL=https://git.t.khs1994.com
 
   drone-agent:
     image: drone/agent:alpine
@@ -57,7 +57,7 @@ services:
       - ./gogs/app.prod.ini:/data/gogs/conf/app.ini:ro
       - ./conf.d/ssl:/data/ssl:rw
     extra_hosts:
-      - "drone.xc725.wang:${PUBLIC_IP}"
+      - "drone.t.khs1994.com:${DRONE_IP}"
 
   mysql:
     image: mysql:5.7.20

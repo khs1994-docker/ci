@@ -1,17 +1,25 @@
 version: '3.4'
 services:
 
+  drone-server:
+    extra_hosts:
+      - "git.${DOMAIN}:${DRONE_IP}"
+
+  drone-agent:
+    extra_hosts:
+      - "git.${DOMAIN}:${DRONE_IP}"
+
   gogs:
     image: gogs/gogs
     ports:
       - "22:22"
-      - "10080:3000"
+      - "3000:3000"
     volumes:
       - gogs-data:/data:rw
       - ./gogs/app.prod.ini:/data/gogs/conf/app.ini:ro
       - ./conf.d/ssl:/data/ssl:rw
     extra_hosts:
-      - "drone.xc725.wang:${PUBLIC_IP}"
+      - "drone.${DOMAIN}:${DRONE_IP}"
 
   mysql:
     image: mysql:5.7.20

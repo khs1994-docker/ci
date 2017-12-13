@@ -1,3 +1,3 @@
-* `Docker Compose` `1.17.1` `3.4`
+* Drone 0.8 配置 coding.net 出现错误，原因不明
 
-* coding.net 0.8.1 出现问题未能解决
+* `Docker Compose` `1.17.1` `3.4`
