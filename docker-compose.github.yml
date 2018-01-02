@@ -31,6 +31,7 @@ services:
     environment:
       - DRONE_SECRET=${DRONE_SECRET}
       - DRONE_SERVER=drone-server:9000
+    # 配置 DNS 避免解析不到网址
     dns: ${DNS}
 
   # gogs:
@@ -49,7 +50,7 @@ services:
   #   image: mysql:${MYSQL_VERSION}
   #   networks:
   #     backend:
-  #   env_file: env/mysql.env
+  #   env_file: conf.d/mysql.env
   #   # ports:
   #     # - "3306:3306"
   #   volumes:
@@ -79,7 +80,7 @@ services:
   #     - "7777:7777"
 
 volumes:
-  gogs-data:
+  # gogs-data:
   # mysql-data:
   drone-data:
   # registry-data:

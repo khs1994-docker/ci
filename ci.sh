@@ -12,7 +12,7 @@ if [ ! -f update.sh ];then cp update.example.sh update.sh; fi
 
 cd ../
 
-if [ "$1" = "production" ];then echo "You are in Production, Please exec\n"; echo "$ docker-compose -f docker-compose.prod.yml up -d\n"; exit 0; fi
+if [ "$1" = "production" ];then echo "You are in Production, Please exec\n"; echo "$ docker-compose -f docker-compose.github.yml up -d\n"; exit 0; fi
 if [ "$1" = "swarm" ];then echo -e "\nYou are in Swarm mode, Please exec\n\n$ docker swarm init\n$ docker stack deploy -c docker-stack.yml ci\n"; exit 0; fi
 
 command -v docker-compose > /dev/null 2>&1

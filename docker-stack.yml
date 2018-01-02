@@ -63,7 +63,7 @@ services:
     image: mysql:5.7.20
     networks:
       backend:
-    env_file: env/mysql.env
+    env_file: conf.d/mysql.env
     # ports:
       # - "3306:3306"
     volumes:

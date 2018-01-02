@@ -16,17 +16,21 @@ Drone 拉取代码完成编译，部署
 
 # Nginx
 
-一种是使用本机的 Nginx，一种是直接使用本项目的 Nginx。
+## 使用外部 nginx
 
-本项目 Nginx 配置文件默认为 `使用本机 nginx`，使用时将 `conf.d` 中的 `*.conf` `ssl` `auth` 文件复制到本机 nginx 配置文件夹（一般情况下为 `/etc/nginx/conf.d`）。
+>适用于已占用 80 端口的情况。
 
-修改 `/etc/hosts/`
+使用时将 `conf.d` 中的 `*.conf` `ssl` `auth` 文件复制到本机 nginx 配置文件夹（一般情况下为 `/etc/nginx/conf.d`）。
+
+务必修改 `/etc/hosts/`。
 
 ```bash
 127.0.0.1 registry drone-server gogs
 ```
 
-使用本项目的 Nginx 请在 docker-compose.override.yml 文件中将 nginx 部分的注释取消。
+## 使用本项目的 nginx
+
+使用本项目的 Nginx 请在 `docker-compose.override.yml` 文件中将 nginx 部分的注释取消。
 
 # 开发环境
 
@@ -63,7 +67,7 @@ $ ./ci.sh production
 
 ## 封闭注册
 
-请在 `docker-compose.prod.yml` 中将 `- DRONE_ADMIN=khs1994,khs1994-merge-robot` 替换为你的 GitHub 用户名。
+请在 `docker-compose.github.yml` 中将 `- DRONE_ADMIN=khs1994,khs1994-merge-robot` 替换为你的 GitHub 用户名。
 
 关于用户管理请查看 [官方文档](http://docs.drone.io/zh/user-registration/)
 

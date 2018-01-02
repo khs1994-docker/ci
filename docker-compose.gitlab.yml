@@ -1,6 +1,8 @@
 version: '3.4'
 services:
 
+# 实验版，请勿使用
+
   drone-server:
     image: drone/drone:${DRONE_VERSION}
     ports:

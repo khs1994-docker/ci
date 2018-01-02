@@ -1,6 +1,7 @@
 version: '3.4'
 services:
 
+# 出现错误，请勿使用
 
 # http://docs.drone.io/install-for-coding
 
