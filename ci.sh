@@ -12,14 +12,15 @@ if [ ! -f update.sh ];then cp update.example.sh update.sh; fi
 
 cd ../
 
-if [ "$1" = "production" ];then echo "You are in Production, Please exec\n"; echo "$ docker-compose -f docker-compose.github.yml up -d\n"; exit 0; fi
-if [ "$1" = "swarm" ];then echo -e "\nYou are in Swarm mode, Please exec\n\n$ docker swarm init\n$ docker stack deploy -c docker-stack.yml ci\n"; exit 0; fi
-
 command -v docker-compose > /dev/null 2>&1
 
 if [ $? -ne 0 ];then echo "docker-compose not install"; exit 1; fi
 
-echo
-echo "You are in Local Development,please exec"
-echo "$ docker-compose up -d"
-echo
+if [ "$1" = "production" ];then echo "You are in Production, Please exec\n"; exec echo "$ docker-compose -f docker-compose.github.yml up -d\n"; fi
+if [ "$1" = "swarm" ];then exec echo "\nYou are in Swarm mode, Please exec\n\n$ docker swarm init\n\n$ docker stack deploy -c docker-stack.yml ci\n"; fi
+if [ "$1" = 'down' ];then exec docker-compose -f docker-compose.override.yml down; fi
+
+echo "You are in Local Development, please exec
+
+$ docker-compose -f docker-compose.gogs.yml -f docker-compose.override.yml up -d
+"

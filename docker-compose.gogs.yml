@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3.5'
 services:
 
   drone-server:
@@ -18,6 +18,8 @@ services:
       - DRONE_GOGS=true
       - DRONE_GOGS_URL=${DRONE_GOGS_URL}
       - DRONE_SECRET=${DRONE_SECRET}
+    extra_hosts:
+      - "git.${DOMAIN}:${DRONE_IP}"
 
   drone-agent:
     image: drone/agent:${DRONE_VERSION}
@@ -30,9 +32,8 @@ services:
       - DRONE_SECRET=${DRONE_SECRET}
       - DRONE_SERVER=drone-server:9000
     dns: ${DNS}
+    extra_hosts:
+      - "git.${DOMAIN}:${DRONE_IP}"
 
 volumes:
-  gogs-data:
-  mysql-data:
   drone-data:
-  registry-data:

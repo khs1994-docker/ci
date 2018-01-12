@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3.5'
 services:
 
   drone-server:
@@ -34,53 +34,5 @@ services:
     # 配置 DNS 避免解析不到网址
     dns: ${DNS}
 
-  # gogs:
-  #   image: gogs/gogs
-  #   ports:
-  #     - "${SSH_PORT}:22"
-  #     - "${PUBLIC_IP}:10080:3000"
-  #   volumes:
-  #     - gogs-data:/data:rw
-  #     - ./gogs/app.prod.ini:/data/gogs/conf/app.ini:ro
-  #     - ${SSL_PATH}:/data/ssl:rw
-  #   extra_hosts:
-  #     - "drone.${DOMAIN}:${DRONE_IP}"
-  #
-  # mysql:
-  #   image: mysql:${MYSQL_VERSION}
-  #   networks:
-  #     backend:
-  #   env_file: conf.d/mysql.env
-  #   # ports:
-  #     # - "3306:3306"
-  #   volumes:
-  #     - mysql-data:/var/lib/mysql:rw
-  #   command: ["mysqld","--character-set-server=utf8mb4"]
-  #
-  # registry:
-  #   image: registry
-  #   ports:
-  #     - "${PUBLIC_IP}:5000:5000"
-  #   volumes:
-  #     - registry-data:/var/lib/registry:rw
-
-  # nginx:
-  #   image: khs1994/nginx:${NGINX_VERSION}-alpine
-  #   env_file: .env
-  #   ports:
-  #     - "443:443"
-  #   volumes:
-  #     - ./conf.d:/etc/nginx/conf.d
-
-  # webhooks:
-  #   build:
-  #     context: webhooks
-  #   image: khs1994/ci
-  #   ports:
-  #     - "7777:7777"
-
 volumes:
-  # gogs-data:
-  # mysql-data:
   drone-data:
-  # registry-data:
