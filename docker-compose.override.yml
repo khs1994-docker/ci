@@ -1,14 +1,13 @@
-version: '3.4'
+version: '3.5'
 services:
 
   drone-server:
-    extra_hosts:
-      - "git.${DOMAIN}:${DRONE_IP}"
+    image: drone/drone:${DRONE_VERSION}
 
   drone-agent:
-    extra_hosts:
-      - "git.${DOMAIN}:${DRONE_IP}"
+    image: drone/agent:${DRONE_VERSION}
 
+  # 外部服务
   gogs:
     image: gogs/gogs
     ports:
@@ -22,7 +21,7 @@ services:
       - "drone.${DOMAIN}:${DRONE_IP}"
 
   mysql:
-    image: mysql:5.7.20
+    image: mysql:8.0.3
     env_file: conf.d/mysql.env
     # ports:
       # - "3306:3306"
@@ -39,7 +38,7 @@ services:
       - registry-data:/var/lib/registry:rw
 
   # nginx:
-  #   image: khs1994/nginx:${NGINX_VERSION}-alpine
+  #   image: nginx:${NGINX_VERSION}-alpine
   #   networks:
   #     backend:
   #   env_file: .env
@@ -47,3 +46,8 @@ services:
   #     - "443:443"
   #   volumes:
   #     - ./conf.d:/etc/nginx/conf.d
+
+volumes:
+  gogs-data:
+  mysql-data:
+  registry-data:
