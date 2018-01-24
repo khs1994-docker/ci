@@ -8,11 +8,15 @@
 
 Drone 拉取代码完成编译，部署
 
+更多信息：https://www.khs1994.com/categories/CI/Drone/
+
 # 示例
 
-* [Hexo](https://github.com/khs1994-docker/drone-demo-hexo)
+* [Hexo](https://github.com/khs1994-drone-ci-examples/hexo)
 
-* [Gitbook](https://github.com/khs1994-docker/drone-demo-gitbook)
+* [Gitbook](https://github.com/khs1994-drone-ci-examples/gitbook)
+
+* [PHP](https://github.com/khs1994-php/tencent-ai)
 
 # 初始化
 
@@ -110,7 +114,11 @@ Drone 使用新的容器来拉取 git 代码（Drone 启动的 git 容器不能�
 
 遇到这个问题的人看一下就明白了，这里不再赘述。
 
-我的解决办法是在 DNS 解析商将 `Gogs` 的网址（ 例如 `git.t.khs1994.com` ） 解析到路由器分配给电脑的 IP。
+我的解决办法是在 DNS 解析商将 `Gogs` 的网址（ 例如 `git.t.khs1994.com` ） 解析到路由器分配给电脑的 IP，例如
+
+```bash
+git.t.khs1994.com 解析到 192.168.199.100
+```
 
 # Swarm mode
 
