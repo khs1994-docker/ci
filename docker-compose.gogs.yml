@@ -4,6 +4,9 @@ services:
   drone-server:
     image: drone/drone:${DRONE_VERSION}
     ports:
+      #
+      # 如果没启用 https 则内部端口开放的是 8000 不是 80
+      #
       # - 80:80
       # - 443:443
       - "${PUBLIC_IP}:8000:8000"
@@ -18,8 +21,6 @@ services:
       - DRONE_GOGS=true
       - DRONE_GOGS_URL=${DRONE_GOGS_URL}
       - DRONE_SECRET=${DRONE_SECRET}
-    extra_hosts:
-      - "git.${DOMAIN}:${DRONE_IP}"
 
   drone-agent:
     image: drone/agent:${DRONE_VERSION}
@@ -31,9 +32,6 @@ services:
     environment:
       - DRONE_SECRET=${DRONE_SECRET}
       - DRONE_SERVER=drone-server:9000
-    dns: ${DNS}
-    extra_hosts:
-      - "git.${DOMAIN}:${DRONE_IP}"
 
 volumes:
   drone-data:

@@ -2,13 +2,23 @@
 
 # 如何工作
 
-本地制作 Docker 镜像推送到私有仓库（Docker Registry）
+**1.** 本地制作 Docker 镜像推送到私有仓库（Docker Registry）
 
-本地开发，推送到 Gogs
+**2.** 本地开发项目，推送到 git （例如，GitHub，Gogs）
 
-Drone 拉取代码完成编译，部署
+Drone 自动拉取代码完成编译，部署。
 
 更多信息：https://www.khs1994.com/categories/CI/Drone/
+
+# 疑问
+
+鉴于项目 `「比较复杂」`，你可以在 [Issue](https://github.com/khs1994-docker/ci/issues) 来提出你部署过程中遇到的问题。
+
+# 准备
+
+* 域名（没有的话，就用 `IP:不同端口` 来区分服务）
+
+* SSL 证书（在国内云服务商免费申请）
 
 # 示例
 

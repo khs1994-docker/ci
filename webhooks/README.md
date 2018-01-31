@@ -3,9 +3,9 @@
 ## 初始化
 
 ```bash
-cp .env.example .env \
-   update.example.js update.js \
-   update.example.sh update.sh
+cp .env.example .env ; \
+   cp update.example.js update.js ; \
+   cp update.example.sh update.sh
 ```
 
 ## 配置
