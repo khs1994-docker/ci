@@ -27,6 +27,10 @@ if [ "$1" = "swarm" ];then
   exec echo "\nYou are in Swarm mode, Please exec\n\n$ docker swarm init\n\n$ docker stack deploy -c docker-stack.yml ci\n"
 fi
 
+if [ "$1" = "khs1994" ];then
+  exec echo "Please exec\n\n$ docker-compose -f docker-compose.yml -f docker-compose.khs1994.yml up -d\n"
+fi
+
 if [ "$1" = 'down' ];then exec docker-compose down --remove-orphans; fi
 
 echo "Maybe You are in Local Development, please exec

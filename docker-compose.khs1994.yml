@@ -1,14 +1,14 @@
 version: "3.5"
 
-ervices:
+services:
 
   drone-github-server:
     image: drone/drone:${DRONE_VERSION}
     restart: always
     ports:
-      - "${DRONE_HOST_BASED_PORT}:${DRONE_PORT_BASED_PORT}:8000"
-    volumes:
-      - drone-github-data:/var/lib/drone/:rw
+      - "${DRONE_HOST_BASED_PORT}:18000:8000"
+    # volumes:
+    #   - drone-github-data:/var/lib/drone/:rw
     networks:
       - frontend
       - backend
@@ -24,6 +24,9 @@ ervices:
       - DRONE_GITHUB=true
       - DRONE_GITHUB_CLIENT=${DRONE_GITHUB_CLIENT_TEST}
       - DRONE_GITHUB_SECRET=${DRONE_GITHUB_SECRET_TEST}
+      - DRONE_SECRET=${DRONE_SECRET}
+      - DRONE_DATABASE_DRIVER=mysql
+      - DRONE_DATABASE_DATASOURCE=root:mytest@tcp(mysql:3306)/gogs?parseTime=true
 
   drone-github-agent:
     image: drone/agent:${DRONE_VERSION}
@@ -38,5 +41,5 @@ ervices:
       - DRONE_SECRET=${DRONE_SECRET}
       - DRONE_SERVER=drone-github-server:9000
 
-volumes:
-  drone-github-data:
+# volumes:
+#   drone-github-data:

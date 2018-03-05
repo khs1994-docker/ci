@@ -19,7 +19,6 @@ services:
       # - 9000:9000
     volumes:
       - drone-data:/var/lib/drone/:rw
-    restart: always
     networks:
       - frontend
       - backend
@@ -90,8 +89,8 @@ services:
   mysql:
     image: mysql:8.0.3
     env_file: config/mysql.env
-    # ports:
-    #   - "${MYSQL_PORT_BASED_PORT}:3306:3306"
+    ports:
+       - "${DRONE_HOST_BASED_PORT}:${MYSQL_PORT_BASED_PORT}:3306"
     networks:
       - backend
     volumes:
