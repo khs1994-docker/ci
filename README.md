@@ -61,3 +61,19 @@ $ docker-compose up -d
 * drone **8000**
 
 * registry **5000**
+
+## 最佳实践
+
+https://www.khs1994.com/categories/CI/Drone/
+
+## More Information
+
+* [Gogs](https://github.com/gogits/gogs)
+
+* [Gogs Docker](https://github.com/gogits/gogs/tree/master/docker)
+
+* [Drone](https://github.com/drone)
+
+* [Drone Documents](http://docs.drone.io/)
+
+* [Drone Docker](https://store.docker.com/profiles/drone)
