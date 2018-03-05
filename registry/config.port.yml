@@ -1,4 +1,7 @@
 version: 0.1
+#
+# https://docs.docker.com/registry/configuration/#list-of-configuration-options
+#
 log:
   accesslog:
     disabled: true
@@ -33,6 +36,11 @@ health:
     enabled: true
     interval: 10s
     threshold: 3
+  tcp:
+    - addr: redis:6379
+      timeout: 3s
+      interval: 10s
+      threshold: 3
 notifications:
   endpoints:
     - name: alistener
@@ -47,3 +55,14 @@ notifications:
 #   remoteurl: https://registry-1.docker.io
 #   username: khs1994
 #   password: ****
+
+redis:
+  addr: redis:6379
+  db: 0
+  dialtimeout: 10ms
+  readtimeout: 10ms
+  writetimeout: 10ms
+  pool:
+    maxidle: 16
+    maxactive: 64
+    idletimeout: 300s

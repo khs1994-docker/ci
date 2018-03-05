@@ -18,7 +18,7 @@ Drone 自动拉取代码完成编译，部署(Drone 本质就是在指定的容�
 
 ## TLS
 
-本 `REAADME.md` 的教程通过端口来提供不同的服务，如果你想要通过域名（`With TLS`）来提供不同的服务，请查看 `README.TLS.md` 文件。
+本 `REAADME.md` 的教程通过端口来提供不同的服务，如果你想要通过域名（`With TLS`）来提供不同的服务，请查看 [README.TLS.md](README.TLS.md) 文件。
 
 ## 端口暴露
 
@@ -34,9 +34,15 @@ Drone 自动拉取代码完成编译，部署(Drone 本质就是在指定的容�
 
 ## 修改配置
 
+```bash
+$ ./ci.sh
+```
+
+修改 `.env` 中的 `DRONE_HOST_BASED_PORT` 为 `你自己的 IP`(例如 `云服务器公网 IP`、`路由器分配给电脑的 IP`)
+
 `gogs/app.port.ini` `registry/config.port.yml`
 
-搜索 `192.168.199.100` 为 `你自己的 IP`(例如 云服务器公网 IP、路由器分配给电脑的 IP)
+搜索 `192.168.199.100` 为 `你自己的 IP`
 
 在 `config/mysql.env` 中配置密码，对应的也要修改 `gogs/app.port.ini` 中的 MySQL 密码
 

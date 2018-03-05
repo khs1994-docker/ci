@@ -24,7 +24,7 @@ Drone 自动拉取代码完成编译，部署(Drone 本质就是在指定的容�
 
 # 准备
 
-* 域名（没有的话，就用 `IP:不同端口` 来区分服务，详见 `README.md`）
+* 域名（没有的话，就用 `IP:不同端口` 来区分服务，详见 [README.md](README.md)）
 
 * SSL 证书（在国内云服务商免费申请）
 
@@ -101,7 +101,7 @@ Drone 自动拉取代码完成编译，部署(Drone 本质就是在指定的容�
 ```bash
 $ ./ci.sh
 
-$ docker-compose -f docker-compose.gogs.yml up -d
+$ docker-compose -f docker-compose.gogs.yml -f docker-compose.other.yml up -d
 ```
 
 # 生产环境
@@ -113,7 +113,7 @@ $ docker-compose -f docker-compose.gogs.yml up -d
 ```bash
 $ ./ci.sh production
 
-$ docker-compose -f docker-compose.github.yml up -d
+$ docker-compose -f docker-compose.github.yml -f docker-compose.other.yml up -d
 ```
 
 # Drone

@@ -16,6 +16,7 @@ services:
       - drone-data:/var/lib/drone/:rw
       # - ${SSL_PATH}:/etc/certs
     networks:
+      - frontend
       - backend
     environment:
       - DRONE_OPEN=true
@@ -54,3 +55,4 @@ services:
 
 volumes:
   drone-data:
+  gogs-data:
