@@ -1,7 +1,9 @@
 version: '3.5'
 services:
 
+#
 # 实验版，请勿使用
+#
 
   drone-server:
     image: drone/drone:${DRONE_VERSION}

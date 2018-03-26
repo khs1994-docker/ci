@@ -31,8 +31,6 @@ services:
     environment:
       - DRONE_SECRET=${DRONE_SECRET}
       - DRONE_SERVER=drone-server:9000
-    # 配置 DNS 避免解析不到网址
-    dns: ${DNS}
 
 volumes:
   drone-data:

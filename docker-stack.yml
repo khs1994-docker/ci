@@ -15,6 +15,7 @@ services:
   drone-server:
     image: drone/drone:alpine
     networks:
+      frontend:
       backend:
     ports:
       # - 80:80
@@ -22,15 +23,16 @@ services:
       - "8000:8000"
       # - 9000:9000
     volumes:
-      - drone-data:/var/lib/drone/:rw
+      # - drone-data:/var/lib/drone/:rw
       # - ${SSL_PATH}:/etc/certs
-    restart: always
     environment:
       - DRONE_HOST=https://drone.t.khs1994.com
       - DRONE_SECRET=khs1994
       - DRONE_OPEN=true
       - DRONE_GOGS=true
       - DRONE_GOGS_URL=https://git.t.khs1994.com
+      - DRONE_DATABASE_DRIVER=mysql
+      - DRONE_DATABASE_DATASOURCE=root:mytest@tcp(mysql:3306)/gogs?parseTime=true
 
   drone-agent:
     image: drone/agent:alpine
@@ -48,6 +50,7 @@ services:
   gogs:
     image: gogs/gogs
     networks:
+      frontend:
       backend:
     ports:
       - "8022:22"
@@ -60,12 +63,14 @@ services:
       - "drone.t.khs1994.com:${DRONE_IP}"
 
   mysql:
-    image: mysql:5.7.20
+    image: mysql:8.0.3
     networks:
       backend:
-    env_file: conf.d/mysql.env
+    env_file: config/mysql.env
+    environment:
+      TZ=Asia/Shanghai
     # ports:
-      # - "3306:3306"
+    #   - "3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql:rw
     command: ["mysqld","--character-set-server=utf8mb4"]
@@ -73,6 +78,7 @@ services:
   registry:
     image: registry
     networks:
+      frontend:
       backend:
     ports:
       - "5000:5000"
@@ -82,10 +88,11 @@ services:
   nginx:
     image: khs1994/nginx:1.13.6-alpine
     networks:
-      backend:
-    env_file: .env
+      frontend:
     ports:
       - "443:443"
+    environment:
+      TZ=Asia/Shanghai
     volumes:
       - ./conf.d:/etc/nginx/conf.d
     depends_on:
@@ -94,10 +101,11 @@ services:
       - drone-server
 
 networks:
+  frontend:
   backend:
 
 volumes:
   gogs-data:
   mysql-data:
-  drone-data:
+  # drone-data:
   registry-data:

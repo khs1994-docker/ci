@@ -3,6 +3,7 @@ services:
 
   drone-server:
     image: drone/drone:${DRONE_VERSION}
+    restart: always
     ports:
       #
       # 如果没启用 https 则内部端口开放的是 8000 不是 80
@@ -14,7 +15,9 @@ services:
     volumes:
       - drone-data:/var/lib/drone/:rw
       # - ${SSL_PATH}:/etc/certs
-    restart: always
+    networks:
+      - frontend
+      - backend
     environment:
       - DRONE_OPEN=true
       - DRONE_HOST=${DRONE_HOST}
@@ -29,9 +32,27 @@ services:
       - drone-server
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:rw
+    networks:
+      - backend
     environment:
       - DRONE_SECRET=${DRONE_SECRET}
       - DRONE_SERVER=drone-server:9000
 
+  gogs:
+    image: gogs/gogs
+    ports:
+      - "22:22"
+      - "3000:3000"
+    networks:
+      - frontend
+      - backend
+    volumes:
+      - gogs-data:/data:rw
+      - ./gogs/app.prod.ini:/data/gogs/conf/app.ini:ro
+      - ./conf.d/ssl:/data/ssl:rw
+    extra_hosts:
+      - "drone.${DOMAIN}:${DRONE_IP}"
+
 volumes:
   drone-data:
+  gogs-data:

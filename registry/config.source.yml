@@ -1,4 +1,7 @@
 version: 0.1
+#
+# https://docs.docker.com/registry/configuration/#list-of-configuration-options
+#
 log:
   fields:
     service: registry

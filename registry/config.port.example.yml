@@ -29,7 +29,7 @@ http:
   # http2:
   #   disabled: false
   # tls:
-  #   certificate: /etc/docker/registry/ssl/docker.t.khs194.com.crt
+  #   certificate: /etc/docker/registry/ssl/docker.t.khs1994.com.crt
   #   key: /etc/docker/registry/ssl/docker.t.khs1994.com.key
 health:
   storagedriver:

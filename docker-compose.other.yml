@@ -1,0 +1,52 @@
+version: '3.5'
+services:
+
+  registry:
+    image: registry
+    # ports:
+    #   - "5000:5000"
+    networks:
+      - frontend
+      - backend
+    volumes:
+      - ./registry/config.yml:/etc/docker/registry/config.yml:ro
+      - registry-data:/var/lib/registry:rw
+
+  mysql:
+    image: mysql:8.0.3
+    env_file: config/mysql.env
+    # ports:
+    #   - "3306:3306"
+    networks:
+      - backend
+    volumes:
+      - mysql-data:/var/lib/mysql:rw
+    command: ["mysqld","--character-set-server=utf8mb4"]
+
+  redis:
+    image: redis:${REDIS_VERSION}-alpine
+    # ports:
+    #   - "6379:6379"
+    networks:
+      - backend
+    volumes:
+      - redis-data:/data
+
+  nginx:
+    image: nginx:${NGINX_VERSION}-alpine
+    networks:
+      - frontend
+    env_file: .env
+    ports:
+      - "443:443"
+    volumes:
+      - ./conf.d:/etc/nginx/conf.d
+
+networks:
+  backend:
+  frontend:
+
+volumes:
+  gogs-data:
+  mysql-data:
+  registry-data:
