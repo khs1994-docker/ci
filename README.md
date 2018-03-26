@@ -6,15 +6,23 @@
 
 **1.** 本地制作 Docker 镜像推送到私有仓库（Docker Registry）
 
-**2.** 本地开发项目，推送到 git （例如，GitHub，Gogs ...）
+**2.** 本地开发项目，根目录编写 `.drone.yml` 文件，推送到 git （例如，GitHub，Gogs ...）
 
-Drone 自动拉取代码完成编译，部署(Drone 本质就是在指定的容器中运行指定的命令，通过项目根目录中的 `.drone.yml` 文件指定)。
+**3** Drone 自动拉取代码完成编译，部署 (Drone 本质就是在指定的容器中运行指定的命令，通过项目根目录中的 `.drone.yml` 文件指定)。
 
 更多信息：https://www.khs1994.com/categories/CI/Drone/
 
+## 使用示例
+
+* [Hexo](https://github.com/khs1994-php/hexo)
+
+* [Gitbook](https://github.com/khs1994-php/gitbook)
+
+* [PHP](https://github.com/khs1994-php/tencent-ai)
+
 ## 疑问
 
-你可以在 [Issue](https://github.com/khs1994-docker/ci/issues) 来提出你部署过程中遇到的问题。
+你可以在 [Issue](https://github.com/khs1994-docker/ci/issues) 来提出你部署及使用过程中遇到的问题。
 
 ## TLS
 
@@ -34,6 +42,8 @@ Drone 自动拉取代码完成编译，部署(Drone 本质就是在指定的容�
 
 ## 修改配置
 
+执行以下命令完成初始化，然后修改配置。
+
 ```bash
 $ ./ci.sh
 ```
@@ -44,7 +54,7 @@ $ ./ci.sh
 
 搜索 `192.168.199.100` 为 `你自己的 IP`
 
-在 `config/mysql.env` 中配置密码，对应的也要修改 `gogs/app.port.ini` 中的 MySQL 密码
+在 `config/mysql.env` 中配置密码，对应的也要修改 `gogs/app.port.ini` 中的 MySQL 密码（`PASSWD` 项）。
 
 ## 启动
 

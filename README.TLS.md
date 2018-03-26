@@ -6,15 +6,23 @@
 
 **1.** 本地制作 Docker 镜像推送到私有仓库（Docker Registry）
 
-**2.** 本地开发项目，推送到 git （例如，GitHub，Gogs ...）
+**2.** 本地开发项目，根目录编写 `.drone.yml` 文件，推送到 git （例如，GitHub，Gogs ...）
 
-Drone 自动拉取代码完成编译，部署(Drone 本质就是在指定的容器中运行指定的命令，通过项目根目录中的 `.drone.yml` 文件指定)。
+**3** Drone 自动拉取代码完成编译，部署 (Drone 本质就是在指定的容器中运行指定的命令，通过项目根目录中的 `.drone.yml` 文件指定)。
 
 更多信息：https://www.khs1994.com/categories/CI/Drone/
 
+## 使用示例
+
+* [Hexo](https://github.com/khs1994-php/hexo)
+
+* [Gitbook](https://github.com/khs1994-php/gitbook)
+
+* [PHP](https://github.com/khs1994-php/tencent-ai)
+
 ## 疑问
 
-鉴于项目 `「比较复杂」`，你可以在 [Issue](https://github.com/khs1994-docker/ci/issues) 来提出你部署过程中遇到的问题。
+鉴于项目 `「比较复杂」`，你可以在 [Issue](https://github.com/khs1994-docker/ci/issues) 来提出你部署及使用过程中遇到的问题。
 
 ## 内部端口
 
@@ -29,14 +37,6 @@ Drone 自动拉取代码完成编译，部署(Drone 本质就是在指定的容�
 * 域名（没有的话，就用 `IP:不同端口` 来区分服务，详见 [README.md](README.md)）
 
 * SSL 证书（在国内云服务商免费申请）
-
-## 示例
-
-* [Hexo](https://github.com/khs1994-drone-ci-examples/hexo)
-
-* [Gitbook](https://github.com/khs1994-drone-ci-examples/gitbook)
-
-* [PHP](https://github.com/khs1994-php/tencent-ai)
 
 ## 初始化
 

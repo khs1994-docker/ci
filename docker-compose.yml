@@ -34,6 +34,7 @@ services:
       - DRONE_GOGS=true
       - DRONE_GOGS_URL=http://${DRONE_HOST_BASED_PORT}:3000
       - DRONE_SECRET=${DRONE_SECRET}
+      - DRONE_GOGS_PRIVATE_MODE=true
 
       #
       #
