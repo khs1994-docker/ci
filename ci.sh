@@ -236,9 +236,9 @@ test $OS = 'Darwin' && export PATH=/usr/local/opt/gnu-sed/libexec/gnubin:$PATH
 
 _init
 
-. .env
+. $PWD/.env
 
-. secrets/mysql.env
+. $PWD/secrets/mysql.env
 
 . ~/.bash_profile > /dev/null 2>&1 || echo
 
