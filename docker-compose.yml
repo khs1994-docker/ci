@@ -49,7 +49,7 @@ services:
     volumes:
       - gogs-data:/data:rw
       - ./config/nginx/ssl:/etc/nginx/conf.d/ssl:rw
-      - ./gogs/app.ini:/data/gogs/conf/app.ini:rw
+      - ./config/gogs/app.ini:/data/gogs/conf/app.ini:rw
       - ./logs/gogs:/app/gogs/log:rw
 
   registry:
@@ -61,7 +61,7 @@ services:
       - frontend
       - backend
     volumes:
-      - ./registry/config.yml:/etc/docker/registry/config.yml:ro
+      - ./config/registry/config.yml:/etc/docker/registry/config.yml:ro
       - registry-data:/var/lib/registry:rw
 
   mysql:
