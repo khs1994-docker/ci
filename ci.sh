@@ -18,7 +18,7 @@ Commands:
 
   config              [--open-port]
 
-  up-tls       [-d]   [--open-port]   [--reset]
+  up-tls       [-d]   [--open-port]   [--reset]  [--use-external-nginx=/etc/nginx/conf.d]
 
   tls-config          [--open-port]
 
@@ -53,6 +53,7 @@ _init(){
   _cp gogs/app.ini gogs/app.example.ini
   _cp registry/config.yml registry/config.example.yml
   _cp docker-compose.override.yml docker-compose.override.demo.yml
+
   cd webhooks
 
   _cp .env .env.example
@@ -60,6 +61,14 @@ _init(){
   _cp update.sh update.example.sh
 
   cd ../
+
+  cd config/nginx
+
+  _cp docker-registry.conf demo-docker-registry.config
+  _cp drone.conf demo-drone.config
+  _cp gogs.conf demo-gogs.config
+
+  cd ../../
 
   command -v docker-compose > /dev/null 2>&1
 
