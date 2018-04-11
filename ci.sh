@@ -58,12 +58,12 @@ _cp(){
 
 _init(){
   _cp .env .env.example
+  _cp docker-compose.override.yml docker-compose.override.demo.yml
 
   cd config
 
   _cp gogs/app.ini gogs/app.example.ini
   _cp registry/config.yml registry/config.example.yml
-  _cp docker-compose.override.yml docker-compose.override.demo.yml
 
   cd ../webhooks
 
