@@ -77,20 +77,57 @@ _change_mysql_root_password(){
 }
 
 _up(){
-    sed -i
-    docker-compose up ${CI_INCLUDE:-drone-server drone-agent gogs registry}
+    `echo $SED` "s#{{ CI_DOMAIN }}#${CI_BASED_PORT_DRONE_HOST:-192.168.199.100}#g" gogs/app.ini
+
+    `echo $SED` "s#{{ DB_TYPE }}#${CI_DB_TYPE:-mysql}#g" gogs/app.ini
+    `echo $SED` "s#{{ DB_HOST }}#${CI_EXTERNAL_MYSQL_HOST:-mysql}:${CI_EXTERNAL_MYSQL_PORT:-3306}#g" gogs/app.ini
+    `echo $SED` "s#{{ DB_DATABASE }}#${CI_EXTERNAL_MYSQL_DATABASE:-$MYSQL_DATABASE}#g" gogs/app.ini
+    `echo $SED` "s#{{ DB_USERNAME }}#${CI_EXTERNAL_MYSQL_USERNAME:-root}#g" gogs/app.ini
+    `echo $SED` "s#{{ DB_PASSWORD }}#${CI_EXTERNAL_MYSQL_PASSWORD:-$MYSQL_ROOT_PASSWORD}#g" gogs/app.ini
+
+    `echo $SED` "s#{{ CI_DOMAIN_FULL }}#${CI_BASED_PORT_DRONE_HOST:-192.168.199.100}#g" gogs/app.ini
+    `echo $SED` "s#{{ PROTOCOL }}#http#g" gogs/app.ini
+    `echo $SED` "s!^CERT_FILE.*!#CERT_FILE!g" gogs/app.ini
+    `echo $SED` "s!^KEY_FILE.*!#KEY_FILE!g" gogs/app.ini
+    `echo $SED` "s!^TLS_MIN_VERSION.*!#TLS_MIN_VERSION!g" gogs/app.ini
+
+    `echo $SED` "s#{{ MAIL_HOST }}#${CI_MAIL_HOST}#g" gogs/app.ini
+    `echo $SED` "s#{{ MAIL_FROM }}#${CI_MAIL_FROM}#g" gogs/app.ini
+    `echo $SED` "s#{{ MAIL_USERNAME }}#${CI_MAIL_USERNAME}#g" gogs/app.ini
+    `echo $SED` "s#{{ MAIL_PASSWORD }}#${CI_MAIL_PASSWORD}#g" gogs/app.ini
+    # docker-compose up ${CI_INCLUDE:-drone-server drone-agent gogs registry}
 }
 
 _up-tls(){
-    sed -i
-    docker-compose up ${CI_INCLUDE:-drone-server drone-agent gogs registry}
+    `echo $SED` "s#{{ CI_DOMAIN }}#${CI_DOMAIN:-t.khs1994.com}#g" gogs/app.ini
+
+    `echo $SED` "s#{{ DB_TYPE }}#${CI_DB_TYPE:-mysql}#g" gogs/app.ini
+    `echo $SED` "s#{{ DB_HOST }}#${CI_EXTERNAL_MYSQL_HOST:-mysql}:${CI_EXTERNAL_MYSQL_PORT:-3306}#g" gogs/app.ini
+    `echo $SED` "s#{{ DB_DATABASE }}#${CI_EXTERNAL_MYSQL_DATABASE:-$MYSQL_DATABASE}#g" gogs/app.ini
+    `echo $SED` "s#{{ DB_USERNAME }}#${CI_EXTERNAL_MYSQL_USERNAME:-root}#g" gogs/app.ini
+    `echo $SED` "s#{{ DB_PASSWORD }}#${CI_EXTERNAL_MYSQL_PASSWORD:-$MYSQL_ROOT_PASSWORD}#g" gogs/app.ini
+
+    `echo $SED` "s#{{ CI_DOMAIN_FULL }}#git.${CI_BASED_PORT_DRONE_HOST:-t.khs1994.com}#g" gogs/app.ini
+    `echo $SED` "s#{{ PROTOCOL }}#https#g" gogs/app.ini
+
+    `echo $SED` "s#{{ MAIL_HOST }}#${CI_MAIL_HOST}#g" gogs/app.ini
+    `echo $SED` "s#{{ MAIL_FROM }}#${CI_MAIL_FROM}#g" gogs/app.ini
+    `echo $SED` "s#{{ MAIL_USERNAME }}#${CI_MAIL_USERNAME}#g" gogs/app.ini
+    `echo $SED` "s#{{ MAIL_PASSWORD }}#${CI_MAIL_PASSWORD}#g" gogs/app.ini
+    # docker-compose up ${CI_INCLUDE:-drone-server drone-agent gogs registry}
 }
 
 _down(){
   docker-compose down --remove-orphans
 }
 
-set -e
+set -ex
+
+OS=`uname -s`
+
+SED='sed -i '
+
+test $OS = 'Darwin' && SED='sed -i "" '
 
 _init
 
