@@ -66,7 +66,8 @@ _init(){
 
 _reset(){
   rm -rf .env \
-      gogs/app.prod.ini gogs/app.port.ini registry/config.yml registry/config.port.yml \
+      gogs/app.ini \
+      registry/config.yml \
       webhooks/.env \
       webhooks/update.js \
       webhooks/update.sh
