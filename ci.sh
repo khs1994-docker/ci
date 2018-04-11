@@ -8,17 +8,19 @@ Official WebSite https://ci.khs1994.com
 
 Usage: ./ci.sh COMMAND
 
+Debug: [env] DEBUG=1 ./ci.sh COMMAND
+
 Commands:
 
   change-mysql-root-password
 
-  up
+  up [-d] [--open-port]
 
-  config
+  config [--open-port]
 
-  up-tls
+  up-tls [-d] [--open-port]
 
-  tls-config
+  tls-config [--open-port]
 
   down
 
@@ -50,7 +52,7 @@ _init(){
   _cp .env .env.example
   _cp gogs/app.ini gogs/app.example.ini
   _cp registry/config.yml registry/config.example.yml
-
+  _cp docker-compose.override.yml docker-compose.override.demo.yml
   cd webhooks
 
   _cp .env .env.example
@@ -66,6 +68,7 @@ _init(){
 
 _reset(){
   rm -rf .env \
+      docker-compose.override.yml \
       gogs/app.ini \
       registry/config.yml \
       webhooks/.env \
@@ -96,7 +99,14 @@ _up(){
     `echo $SED` "s#{{ MAIL_FROM }}#${CI_MAIL_FROM}#g" gogs/app.ini
     `echo $SED` "s#{{ MAIL_USERNAME }}#${CI_MAIL_USERNAME}#g" gogs/app.ini
     `echo $SED` "s#{{ MAIL_PASSWORD }}#${CI_MAIL_PASSWORD}#g" gogs/app.ini
-    # docker-compose up ${CI_INCLUDE:-drone-server drone-agent gogs registry}
+
+    `echo $SED` "s#{{ REDIS_HOST }}#${CI_EXTERNAL_REDIS_HOST:-$REDIS_HOST}#g" registry/config.yml
+    `echo $SED` "s#{{ WEBHOOKS_HOST }}#${WEBHOOKS_HOST:-192.168.199.100}#g" registry/config.yml
+    # docker-compose ${COMPOSE_FILE:-} up ${opt:-) ${CI_INCLUDE:-drone-server drone-agent gogs registry}
+}
+
+_config(){
+  docker-compose ${COMPOSE_FILE:-} config
 }
 
 _up-tls(){
@@ -115,14 +125,23 @@ _up-tls(){
     `echo $SED` "s#{{ MAIL_FROM }}#${CI_MAIL_FROM}#g" gogs/app.ini
     `echo $SED` "s#{{ MAIL_USERNAME }}#${CI_MAIL_USERNAME}#g" gogs/app.ini
     `echo $SED` "s#{{ MAIL_PASSWORD }}#${CI_MAIL_PASSWORD}#g" gogs/app.ini
-    # docker-compose up ${CI_INCLUDE:-drone-server drone-agent gogs registry}
+
+    `echo $SED` "s#{{ REDIS_HOST }}#${CI_EXTERNAL_REDIS_HOST:-$REDIS_HOST}#g" registry/config.yml
+    `echo $SED` "s#{{ WEBHOOKS_HOST }}#${WEBHOOKS_HOST:-192.168.199.100}#g" registry/config.yml
+    # docker-compose ${COMPOSE_FILE:-} up ${opt:-) ${CI_INCLUDE:-drone-server drone-agent gogs registry}
+}
+
+_tls-config(){
+  docker-compose ${COMPOSE_FILE:-} config
 }
 
 _down(){
   docker-compose down --remove-orphans
 }
 
-set -ex
+set -e
+
+if [ "$DEBUG" = 'true' ];then set -x; fi
 
 OS=`uname -s`
 
@@ -141,5 +160,11 @@ test ! -z "$1" || print_help_info
 command=$1
 
 shift
+
+for arg in "$@"
+do
+  test $arg = '--open-port' && COMPOSE_FILE='-f docker-compose.yml -f docker-compose.override.yml -f docker-compose.port.yml'
+  test $arg = '-d' && opt='-d'
+done
 
 _$command "$@"

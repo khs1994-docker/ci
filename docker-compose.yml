@@ -5,7 +5,7 @@
 version: "3.6"
 
 x-common:
-  $default-common
+  &default-common
   restart: always
   networks:
     - backend

@@ -64,6 +64,21 @@ $ ./ci.sh
 
 ### 使用外部服务？
 
+### 选择 Git 服务商
+
+编辑 `docker-compose.override.yml` 文件最下方
+
+默认使用 Goos ，按如下内容修改，使用 GitHub
+
+```yaml
+services:
+  drone-server:
+    # << : *gogs
+    << : *github
+    # << : *coding
+    # << : *khs1994
+```
+
 ## 启动
 
 ```bash
