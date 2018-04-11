@@ -18,7 +18,7 @@ services:
     ports:
       # - 80:80
       # - 443:443
-      - "${CI_BASED_PORT_DRONE_HOST}:${CI_BASED_PORT_DRONE_PORT:-8000}:8000"
+      - "${CI_HOST}:${CI_DRONE_PORT:-8000}:8000"
       # - 9000:9000
     volumes:
       - drone-data:/var/lib/drone/:rw
@@ -41,20 +41,22 @@ services:
     << : *default-common
     image: gogs/gogs:latest@sha256:e63c53931539b1869ac36e1262fe6564274abeb8e577ca9962187368f242022c
     ports:
-      - "${CI_BASED_PORT_DRONE_HOST}:${CI_BASED_PORT_GOGS_SSH_PORT}:22"
-      - "${CI_BASED_PORT_DRONE_HOST}:${CI_BASED_PORT_GOGS_PORT}:3000"
+      - "${CI_HOST}:${CI_GOGS_SSH_PORT}:22"
+      - "${CI_HOST}:${CI_GOGS_PORT}:3000"
     networks:
       - frontend
       - backend
     volumes:
       - gogs-data:/data:rw
+      - ./config/nginx/ssl:/etc/nginx/conf.d/ssl:rw
       - ./gogs/app.ini:/data/gogs/conf/app.ini:rw
+      - ./logs/gogs:/app/gogs/log:rw
 
   registry:
     << : *default-common
     image: registry:latest@sha256:672d519d7fd7bbc7a448d17956ebeefe225d5eb27509d8dc5ce67ecb4a0bce54
     ports:
-      - "${CI_BASED_PORT_DRONE_HOST}:${CI_BASED_PORT_REGISTRY_PORT:-5000}:5000"
+      - "${CI_HOST}:${CI_REGISTRY_PORT:-5000}:5000"
     networks:
       - frontend
       - backend
@@ -65,7 +67,7 @@ services:
   mysql:
     << : *default-common
     image: mysql:${CI_MYSQL_VERSION:-8.0.3}
-    env_file: .env
+    env_file: secrets/mysql.env
     volumes:
       - mysql-data:/var/lib/mysql:rw
     command: ["mysqld","--character-set-server=utf8mb4"]
@@ -77,14 +79,15 @@ services:
       - redis-data:/data
 
   nginx:
+    << : *default-common
     image: nginx:${CI_NGINX_VERSION:-1.13.11}-alpine
     networks:
       - frontend
-    env_file: .env
     ports:
       - "443:443"
     volumes:
       - ./config/nginx:/etc/nginx/conf.d
+      - ./logs/nginx:/var/log/nginx
 
 volumes:
   gogs-data:

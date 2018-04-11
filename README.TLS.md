@@ -12,11 +12,7 @@
 
 * 域名
 
-* git.t.khs1994.com TLS 证书
-
-* drone.t.khs1994.com TLS 证书
-
-* docker.t.khs1994.com TLS 证书
+* `*.t.khs1994.com` 通配符 TLS 证书 （acme.sh 可以免费申请）
 
 ## 快速开始
 
@@ -30,11 +26,13 @@ $ ./ci.sh
 
 ### 编辑 `.env` 文件
 
-务必编辑 `.env` 文件，具体变量含义文件中的注释有详细的说明。
+* `CI_HOST` 为主机 IP (建议使用 内网 IP, example 192.168.199.100)
 
-## `443` 端口是否占用
+* `CI_DOMAIN` 为服务主域名（example t.khs1994.com）
 
-根据 `443` 端口是否占用情况，使用下面的命令启动。
+### `443` 端口是否占用
+
+根据 `443` 端口是否占用情况，使用下面的命令启动 CI `服务`。
 
 * 已占用->实体机运行 NGINX
 
@@ -42,17 +40,15 @@ $ ./ci.sh
   $ ./ci.sh up-tls --use-external-nginx=/etc/nginx/conf.d
   ```
 
+  重启 NGINX
+
 * 已占用->容器运行 NGINX
 
   ```bash
-  $ ./ci.sh up-tls --use-external-nginx=container
+  $ ./ci.sh up-tls --use-external-nginx=/etc/nginx/conf.d
   ```
 
-  使用时将 `conf.d` 中的 `*.conf` `ssl` `auth` 文件复制到其他的文件夹中。
-
-  将三个 `*.conf` 中的 `registry-server` `drone-server` `gogs-server` 字段替换为本机路由器分配的地址。
-
-  之后将配置文件挂载到已存在的 nginx 容器中。
+  重启 NGINX 容器
 
 * 未占用
 

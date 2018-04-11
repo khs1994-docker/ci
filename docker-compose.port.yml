@@ -1,10 +1,10 @@
 version: "3.6"
 
 services:
-  
+
   mysql:
     ports:
-      - "${CI_BASED_PORT_DRONE_HOST:-127.0.0.1}:${CI_BASED_PORT_MYSQL_PORT:-13306}:3306"
+      - "${CI_HOST:-127.0.0.1}:${CI_MYSQL_PORT:-13306}:3306"
   redis:
     ports:
-      - "${CI_BASED_PORT_DRONE_HOST:-127.0.0.1}:${CI_BASED_PORT_REDIS_PORT:-16379}:6379"
+      - "${CI_HOST:-127.0.0.1}:${CI_REDIS_PORT:-16379}:6379"
