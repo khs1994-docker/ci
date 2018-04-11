@@ -179,7 +179,9 @@ _up-tls(){
       done
         cp -a $PWD/*.conf $NGINX_CONF
         mkdir -p $NGINX_CONF/ssl || echo
-        cp -a $PWD/ssl/*  $NGINX_CONF/ssl
+        if ! [ -f ssl/$CI_DOMAIN.crt ];then
+            cp -a $PWD/ssl/*  $NGINX_CONF/ssl
+        fi
       cd -
     }
 
@@ -238,7 +240,7 @@ _init
 
 . secrets/mysql.env
 
-. ~/.bash_profile || echo
+. ~/.bash_profile > /dev/null 2>&1 || echo
 
 test ! -z "$1" || print_help_info
 
