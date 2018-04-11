@@ -2,47 +2,43 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/khs1994-docker/ci.svg?style=social&label=Stars)](https://github.com/khs1994-docker/ci)
 
+* [问题反馈](https://github.com/khs1994-docker/ci/issues)
+
+* [更多信息](https://www.khs1994.com/categories/CI/Drone/)
+
 ## 如何工作
 
 **1.** 本地制作 Docker 镜像推送到私有仓库（Docker Registry）
 
-**2.** 本地开发项目，根目录编写 `.drone.yml` 文件，推送到 git （例如，GitHub，Gogs ...）
+**2.** 本地开发项目，项目根目录编写 `.drone.yml` 文件，推送到 git （例如，GitHub，Gogs ...）
 
 **3** Drone 自动拉取代码完成编译，部署 (Drone 本质就是在指定的容器中运行指定的命令，通过项目根目录中的 `.drone.yml` 文件指定)。
 
-更多信息：https://www.khs1994.com/categories/CI/Drone/
-
-## 使用示例
-
-* [Hexo](https://github.com/khs1994-php/hexo)
-
-* [Gitbook](https://github.com/khs1994-php/gitbook)
-
-* [PHP](https://github.com/khs1994-php/tencent-ai)
-
-## 疑问
-
-你可以在 [Issue](https://github.com/khs1994-docker/ci/issues) 来提出你部署及使用过程中遇到的问题。
-
 ## TLS
 
-本 `REAADME.md` 的教程通过端口来提供不同的服务，如果你想要通过域名（`With TLS`）来提供不同的服务，请查看 [README.TLS.md](README.TLS.md) 文件。
+本 `REAADME.md` 的教程通过端口来提供不同的服务，如果你想要通过域名（`With TLS`）来提供不同的服务，请查看 [README.TLS.md](README.TLS.md)。
 
-## 端口开放
+## 准备
 
-> 原则，能不开放尽量不开放（例如数据库、缓存）。
+* 有公网 IP 的云服务器（推荐，但不是必须）
 
-* `Gogs` **3000** **8022**
+* Docker CE v18.03 Stable +
 
-* `Drone` **8000**
+* docker-compose v1.20.1 +
 
-* `Docker Registry` **5000**
+* 知道如何注册 GitHub App (GitHub only)
 
-* `MYSQL` **13306**(默认不开放)
-
-* `REDIS` **16379**(默认不开放)
+* `brew install gnu-sed` (macOS only)
 
 ## 快速开始
+
+### 安装
+
+```bash
+$ git clone -b v18.03 https://github.com/khs1994-docker/ci.git ~/ci
+
+$ cd ci
+```
 
 ### 修改配置
 
@@ -68,9 +64,12 @@ $ ./ci.sh
 
 编辑 `docker-compose.override.yml` 文件最下方
 
-默认使用 Goos ，按如下内容修改，使用 GitHub
+默认使用 `Goos` ，如需使用 `GitHub` 按如下内容修改
 
 ```yaml
+
+...
+
 services:
   drone-server:
     # << : *gogs
@@ -87,6 +86,8 @@ $ ./ci.sh up [-d]
 
 ## 访问服务
 
+> 能不开放端口尽量不开放（例如数据库、缓存）。
+
 * git HTTP **3000**
 
 * git SSH **8022**
@@ -94,6 +95,14 @@ $ ./ci.sh up [-d]
 * drone **8000**
 
 * registry **5000**
+
+## 使用示例
+
+* [HEXO](https://github.com/khs1994-php/hexo)
+
+* [GitBook](https://github.com/khs1994-php/gitbook)
+
+* [PHP](https://github.com/khs1994-php/tencent-ai)
 
 ## 最佳实践
 
