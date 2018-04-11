@@ -14,13 +14,13 @@ Commands:
 
   change-mysql-root-password
 
-  up [-d] [--open-port] [--reset]
+  up           [-d]   [--open-port]   [--reset]
 
-  config [--open-port]
+  config              [--open-port]
 
-  up-tls [-d] [--open-port] [--reset]
+  up-tls       [-d]   [--open-port]   [--reset]  [--use-external-nginx=/etc/nginx/conf.d]
 
-  tls-config [--open-port]
+  tls-config          [--open-port]
 
   down
 
@@ -53,6 +53,7 @@ _init(){
   _cp gogs/app.ini gogs/app.example.ini
   _cp registry/config.yml registry/config.example.yml
   _cp docker-compose.override.yml docker-compose.override.demo.yml
+
   cd webhooks
 
   _cp .env .env.example
@@ -60,6 +61,14 @@ _init(){
   _cp update.sh update.example.sh
 
   cd ../
+
+  cd config/nginx
+
+  _cp docker-registry.conf demo-docker-registry.config
+  _cp drone.conf demo-drone.config
+  _cp gogs.conf demo-gogs.config
+
+  cd ../../
 
   command -v docker-compose > /dev/null 2>&1
 
@@ -80,7 +89,16 @@ _change_mysql_root_password(){
  echo 1
 }
 
+_sed_common(){
+  sed -i "s#{{ MAIL_HOST }}#${CI_MAIL_HOST}#g" gogs/app.ini
+  sed -i "s#{{ MAIL_FROM }}#${CI_MAIL_FROM}#g" gogs/app.ini
+  sed -i "s#{{ MAIL_USERNAME }}#${CI_MAIL_USERNAME}#g" gogs/app.ini
+  sed -i "s#{{ MAIL_PASSWORD }}#${CI_MAIL_PASSWORD}#g" gogs/app.ini
+}
+
 _up(){
+    _sed_common
+
     sed -i "s#{{ CI_DOMAIN }}#${CI_BASED_PORT_DRONE_HOST:-192.168.199.100}#g" gogs/app.ini
 
     sed -i "s#{{ DB_TYPE }}#${CI_DB_TYPE:-mysql}#g" gogs/app.ini
@@ -95,13 +113,8 @@ _up(){
     sed -i "s!^KEY_FILE.*!#KEY_FILE!g" gogs/app.ini
     sed -i "s!^TLS_MIN_VERSION.*!#TLS_MIN_VERSION!g" gogs/app.ini
 
-    sed -i "s#{{ MAIL_HOST }}#${CI_MAIL_HOST}#g" gogs/app.ini
-    sed -i "s#{{ MAIL_FROM }}#${CI_MAIL_FROM}#g" gogs/app.ini
-    sed -i "s#{{ MAIL_USERNAME }}#${CI_MAIL_USERNAME}#g" gogs/app.ini
-    sed -i "s#{{ MAIL_PASSWORD }}#${CI_MAIL_PASSWORD}#g" gogs/app.ini
-
     sed -i "s#{{ REDIS_HOST }}#${CI_EXTERNAL_REDIS_HOST:-$REDIS_HOST}#g" registry/config.yml
-    sed -i "s#{{ WEBHOOKS_HOST }}#${WEBHOOKS_HOST:-192.168.199.100}#g" registry/config.yml
+    sed -i "s#{{ WEBHOOKS_HOST }}#${WEBHOOKS_HOST:-http://192.168.199.100}#g" registry/config.yml
 
     sed -i "s#{{ DRONE_HOST }}#http://${CI_BASED_PORT_DRONE_HOST:-192.168.199.100}:${CI_BASED_PORT_DRONE_PORT}#g" docker-compose.override.yml
     sed -i "s#{{ DRONE_GOGS_URL }}#http://${CI_BASED_PORT_DRONE_HOST:-192.168.199.100}:${CI_BASED_PORT_GOGS_PORT=3000}#g" docker-compose.override.yml
@@ -113,6 +126,8 @@ _config(){
 }
 
 _up-tls(){
+    _sed_common
+
     sed -i "s#{{ CI_DOMAIN }}#${CI_DOMAIN:-t.khs1994.com}#g" gogs/app.ini
 
     sed -i "s#{{ DB_TYPE }}#${CI_DB_TYPE:-mysql}#g" gogs/app.ini
@@ -121,16 +136,14 @@ _up-tls(){
     sed -i "s#{{ DB_USERNAME }}#${CI_EXTERNAL_MYSQL_USERNAME:-root}#g" gogs/app.ini
     sed -i "s#{{ DB_PASSWORD }}#${CI_EXTERNAL_MYSQL_PASSWORD:-$MYSQL_ROOT_PASSWORD}#g" gogs/app.ini
 
-    sed -i "s#{{ CI_DOMAIN_FULL }}#git.${CI_BASED_PORT_DRONE_HOST:-t.khs1994.com}#g" gogs/app.ini
+    sed -i "s#{{ CI_DOMAIN_FULL }}#git.${CI_DOMAIN:-t.khs1994.com}#g" gogs/app.ini
     sed -i "s#{{ PROTOCOL }}#https#g" gogs/app.ini
 
-    sed -i "s#{{ MAIL_HOST }}#${CI_MAIL_HOST}#g" gogs/app.ini
-    sed -i "s#{{ MAIL_FROM }}#${CI_MAIL_FROM}#g" gogs/app.ini
-    sed -i "s#{{ MAIL_USERNAME }}#${CI_MAIL_USERNAME}#g" gogs/app.ini
-    sed -i "s#{{ MAIL_PASSWORD }}#${CI_MAIL_PASSWORD}#g" gogs/app.ini
-
     sed -i "s#{{ REDIS_HOST }}#${CI_EXTERNAL_REDIS_HOST:-$REDIS_HOST}#g" registry/config.yml
-    sed -i "s#{{ WEBHOOKS_HOST }}#${WEBHOOKS_HOST:-192.168.199.100}#g" registry/config.yml
+    sed -i "s#{{ WEBHOOKS_HOST }}#${WEBHOOKS_HOST:-https://ci.t.khs1994.com/docker/webhooks}#g" registry/config.yml
+
+    sed -i "s#{{ DRONE_HOST }}#https://drone.${CI_DOMAIN:-t.khs1994.com}#g" docker-compose.override.yml
+    sed -i "s#{{ DRONE_GOGS_URL }}#https://git.${CI_DOMAIN:-t.khs1994.com}#g" docker-compose.override.yml
     docker-compose ${COMPOSE_FILE:-} up ${opt:-} ${CI_INCLUDE:-drone-server drone-agent gogs registry}
 }
 
