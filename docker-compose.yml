@@ -48,7 +48,7 @@ services:
       - backend
     volumes:
       - gogs-data:/data:rw
-      - ./gogs/app.port.ini:/data/gogs/conf/app.ini:ro
+      - ./gogs/app.ini:/data/gogs/conf/app.ini:rw
 
   registry:
     << : *default-common
@@ -59,12 +59,12 @@ services:
       - frontend
       - backend
     volumes:
-      - ./registry/config.port.yml:/etc/docker/registry/config.yml:ro
+      - ./registry/config.yml:/etc/docker/registry/config.yml:ro
       - registry-data:/var/lib/registry:rw
 
   mysql:
     << : *default-common
-    image: mysql:{CI_MYSQL_VERSION:-8.0.3}
+    image: mysql:${CI_MYSQL_VERSION:-8.0.3}
     env_file: .env
     volumes:
       - mysql-data:/var/lib/mysql:rw

@@ -20,11 +20,15 @@
 
 ## 准备
 
+* 有公网 IP 的云服务器（推荐，但不是必须）
+
 * Docker CE v18.03 Stable +
 
 * docker-compose v1.20.1 +
 
 * 知道如何注册 GitHub App (GitHub only)
+
+* `brew install gnu-sed` (macOS only)
 
 ## 快速开始
 
