@@ -7,6 +7,6 @@
     "update": "node update.js"
   },
   "dependencies": {
-    "github-webhook-handler": "*"
+    "github-webhook-handler": "0.7.1"
   }
 }
