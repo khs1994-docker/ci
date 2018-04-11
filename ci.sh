@@ -87,8 +87,7 @@ _init(){
 }
 
 _reset_(){
-  rm -rf docker-compose.override.yml \
-      config/gogs/app.ini \
+  rm -rf config/gogs/app.ini \
       config/registry/config.yml \
       webhooks/update.js \
       webhooks/update.sh \
@@ -97,7 +96,7 @@ _reset_(){
 
 _reset(){
   _reset_
-  rm -rf .env webhooks/.env
+  rm -rf .env webhooks/.env docker-compose.override.yml
 }
 
 _change_mysql_root_password(){
