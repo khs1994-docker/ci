@@ -45,7 +45,7 @@ notifications:
   endpoints:
     - name: alistener
       disabled: true
-      url: {{ WEBHOOKS }}
+      url: {{ WEBHOOKS_HOST }}
       # headers:
       #   Authorization: [Bearer <your token, if needed>]
       timeout: 500ms
