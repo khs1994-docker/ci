@@ -8,7 +8,17 @@ Official WebSite https://ci.khs1994.com
 
 Usage: ./ci.sh COMMAND
 
-Debug: [env] DEBUG=1 ./ci.sh COMMAND
+Debug: [env] DEBUG=1 ./ci.sh COMMAND options
+
+Options:
+
+  --port-port            开放 MySQL Redis 端口
+
+  --reset                重新生成配置文件
+
+  -d                     后台运行
+
+  --use-external-nginx   使用外部 NGINX = 后边值为配置文件路径 (TLS Only)
 
 Commands:
 

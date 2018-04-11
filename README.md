@@ -54,7 +54,7 @@ $ ./ci.sh
 
 ### MySQL 密码
 
-修改 `.env` 中的 `MYSQL_ROOT_PASSWORD` 变量值为 MySQL 密码。
+修改 `secrets/mysql.env` 中的 `MYSQL_ROOT_PASSWORD` 变量值为 MySQL 密码。
 
 ### 启用软件
 
