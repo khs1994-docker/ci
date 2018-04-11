@@ -31,7 +31,7 @@ x-github:
   environment:
     - DRONE_GITHUB=true
     - DRONE_OPEN=${DRONE_OPEN:-false}
-    - DRONE_HOST=${DRONE_HOST}
+    - DRONE_HOST={{ DRONE_HOST }}
     - DRONE_SECRET=${DRONE_SECRET}
     #
     - DRONE_ADMIN=${DRONE_ADMIN}
@@ -44,7 +44,7 @@ x-coding:
   environment:
     - DRONE_CODING=true
     - DRONE_OPEN=${DRONE_OPEN:-false}
-    - DRONE_HOST=${DRONE_HOST}
+    - DRONE_HOST={{ DRONE_HOST }}
     - DRONE_SECRET=${DRONE_SECRET}
     #
     - DRONE_CODING_CLIENT=${DRONE_CODING_CLIENT}
@@ -55,12 +55,12 @@ x-gitlab:
   environment:
     - DRONE_GITLAB=true
     - DRONE_OPEN=${DRONE_OPEN:-false}
-    - DRONE_HOST=${DRONE_HOST}
+    - DRONE_HOST={{ DRONE_HOST }}
     - DRONE_SECRET=${DRONE_SECRET}
     #
     - DRONE_GITLAB_CLIENT=${DRONE_GITLAB_CLIENT}
     - DRONE_GITLAB_SECRET=${DRONE_GITLAB_SECRET}
-    - DRONE_GITLAB_URL=${DRONE_GITLAB_URL}
+    - DRONE_GITLAB_URL={{ DRONE_GITLAB_URL }}
 
 services:
   drone-server:

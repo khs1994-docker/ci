@@ -18,7 +18,7 @@
 
 ## TLS
 
-本教程通过端口来提供不同的服务，如果你想要通过域名（`With TLS`）来提供不同的服务，请查看 [README.TLS.md](README.TLS.md)。
+本教程通过 IP + 不同端口 来提供不同的服务，如果你想要通过域名（`With TLS`）来提供不同的服务，请查看 [README.TLS.md](README.TLS.md)。
 
 ## 准备
 

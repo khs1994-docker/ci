@@ -88,8 +88,8 @@ _init(){
 
 _reset_(){
   rm -rf docker-compose.override.yml \
-      gogs/app.ini \
-      registry/config.yml \
+      config/gogs/app.ini \
+      config/registry/config.yml \
       webhooks/update.js \
       webhooks/update.sh \
       config/nginx/*.conf
@@ -122,6 +122,7 @@ _sed_common(){
 }
 
 _up(){
+    _reset_ ; _init
     _sed_common
     cd config
     sed -i "s#{{ CI_DOMAIN }}#${CI_HOST:-192.168.199.100}#g" gogs/app.ini
@@ -147,6 +148,7 @@ _config(){
 }
 
 _up-tls(){
+    _reset_ ; _init
     _sed_common
     cd config
     sed -i "s#{{ CI_DOMAIN }}#${CI_DOMAIN:-t.khs1994.com}#g" gogs/app.ini
@@ -168,14 +170,16 @@ _up-tls(){
     _sed_external_nginx(){
       # 使用外部 NGINX
       cd config/nginx
-      for file in `ls *.conf`
+      for file in $( ls *.conf )
       do
         sed -i "s#{{ CI_DOMAIN }}#${CI_DOMAIN:-t.khs1994.com}#g" $file
         sed -i "s#{{ REGISTRY_UPSTREAM }}#${CI_HOST:-192.168.199.100}#g" $file
         sed -i "s#{{ DRONE_UPSTREAM }}#${CI_HOST:-192.168.199.100}#g" $file
         sed -i "s#{{ GOGS_UPSTREAM }}#${CI_HOST:-192.168.199.100}#g" $file
       done
-        ln -sf *.conf NGINX_CONF
+        cp -a $PWD/*.conf $NGINX_CONF
+        mkdir -p $NGINX_CONF/ssl || echo
+        cp -a $PWD/ssl/*  $NGINX_CONF/ssl
       cd -
     }
 
@@ -232,6 +236,8 @@ _init
 
 . .env
 
+. secrets/mysql.env
+
 . ~/.bash_profile || echo
 
 test ! -z "$1" || print_help_info
@@ -240,11 +246,16 @@ command=$1
 
 shift
 
+set +e
+[ -z $CI_HOST ] && echo "CI_HOST not set"
+[ -z $CI_DOMAIN ] && echo "CI_DOMAIN not set"
+set -e
+
 for arg in "$@"
 do
   test $arg = '--open-port' && COMPOSE_FILE='-f docker-compose.yml -f docker-compose.override.yml -f docker-compose.port.yml'
   test $arg = '-d' && opt='-d'
-  [[ $arg = '--use-external-nginx=*' ]] && ( ENABLE_NGINX=FALSE ; NGINX_CONF=$( echo $arg | cut -f '=' -d 2 ) )
+  [[ $arg =~ --use-external-nginx=* ]] && ENABLE_NGINX=FALSE && NGINX_CONF=$( echo $arg | cut -d '=' -f 2 )
 done
 
 _$command "$@"
