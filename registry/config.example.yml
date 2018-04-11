@@ -29,7 +29,7 @@ http:
   # http2:
   #   disabled: false
   # tls:
-  #   certificate: /etc/docker/registry/ssl/docker.t.khs1994.com.crt
+  #   certificate: /etc/docker/registry/ssl/docker.t.khs194.com.crt
   #   key: /etc/docker/registry/ssl/docker.t.khs1994.com.key
 health:
   storagedriver:
@@ -37,7 +37,7 @@ health:
     interval: 10s
     threshold: 3
   tcp:
-    - addr: redis:6379
+    - addr: {{ REDIS_HOST }}
       timeout: 3s
       interval: 10s
       threshold: 3
@@ -45,7 +45,7 @@ notifications:
   endpoints:
     - name: alistener
       disabled: true
-      url: http://192.168.199.100
+      url: {{ WEBHOOKS }}
       # headers:
       #   Authorization: [Bearer <your token, if needed>]
       timeout: 500ms
@@ -57,7 +57,7 @@ notifications:
 #   password: ****
 
 redis:
-  addr: redis:6379
+  addr: {{ REDIS_HOST }}
   db: 0
   dialtimeout: 10ms
   readtimeout: 10ms
