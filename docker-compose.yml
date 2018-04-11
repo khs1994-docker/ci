@@ -48,7 +48,9 @@ services:
       - backend
     volumes:
       - gogs-data:/data:rw
+      - ./config/nginx/ssl:/etc/nginx/conf.d/ssl:rw
       - ./gogs/app.ini:/data/gogs/conf/app.ini:rw
+      - ./logs/gogs:/app/gogs/log:rw
 
   registry:
     << : *default-common
@@ -77,6 +79,7 @@ services:
       - redis-data:/data
 
   nginx:
+    << : *default-common
     image: nginx:${CI_NGINX_VERSION:-1.13.11}-alpine
     networks:
       - frontend
@@ -85,6 +88,7 @@ services:
       - "443:443"
     volumes:
       - ./config/nginx:/etc/nginx/conf.d
+      - ./logs/nginx:/var/log/nginx
 
 volumes:
   gogs-data:

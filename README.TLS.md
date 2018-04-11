@@ -12,11 +12,7 @@
 
 * 域名
 
-* git.t.khs1994.com TLS 证书
-
-* drone.t.khs1994.com TLS 证书
-
-* docker.t.khs1994.com TLS 证书
+* `*.t.khs1994.com` 通配符 TLS 证书 （acme.sh 可以免费申请）
 
 ## 快速开始
 

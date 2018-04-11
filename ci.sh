@@ -82,7 +82,8 @@ _reset(){
       registry/config.yml \
       webhooks/.env \
       webhooks/update.js \
-      webhooks/update.sh
+      webhooks/update.sh \
+      config/nginx/*.conf
 }
 
 _change_mysql_root_password(){
@@ -90,6 +91,12 @@ _change_mysql_root_password(){
 }
 
 _sed_common(){
+  sed -i "s#{{ DB_TYPE }}#${CI_DB_TYPE:-mysql}#g" gogs/app.ini
+  sed -i "s#{{ DB_HOST }}#${CI_EXTERNAL_MYSQL_HOST:-mysql}:${CI_EXTERNAL_MYSQL_PORT:-3306}#g" gogs/app.ini
+  sed -i "s#{{ DB_DATABASE }}#${CI_EXTERNAL_MYSQL_DATABASE:-$MYSQL_DATABASE}#g" gogs/app.ini
+  sed -i "s#{{ DB_USERNAME }}#${CI_EXTERNAL_MYSQL_USERNAME:-root}#g" gogs/app.ini
+  sed -i "s#{{ DB_PASSWORD }}#${CI_EXTERNAL_MYSQL_PASSWORD:-$MYSQL_ROOT_PASSWORD}#g" gogs/app.ini
+
   sed -i "s#{{ MAIL_HOST }}#${CI_MAIL_HOST}#g" gogs/app.ini
   sed -i "s#{{ MAIL_FROM }}#${CI_MAIL_FROM}#g" gogs/app.ini
   sed -i "s#{{ MAIL_USERNAME }}#${CI_MAIL_USERNAME}#g" gogs/app.ini
@@ -101,17 +108,14 @@ _up(){
 
     sed -i "s#{{ CI_DOMAIN }}#${CI_BASED_PORT_DRONE_HOST:-192.168.199.100}#g" gogs/app.ini
 
-    sed -i "s#{{ DB_TYPE }}#${CI_DB_TYPE:-mysql}#g" gogs/app.ini
-    sed -i "s#{{ DB_HOST }}#${CI_EXTERNAL_MYSQL_HOST:-mysql}:${CI_EXTERNAL_MYSQL_PORT:-3306}#g" gogs/app.ini
-    sed -i "s#{{ DB_DATABASE }}#${CI_EXTERNAL_MYSQL_DATABASE:-$MYSQL_DATABASE}#g" gogs/app.ini
-    sed -i "s#{{ DB_USERNAME }}#${CI_EXTERNAL_MYSQL_USERNAME:-root}#g" gogs/app.ini
-    sed -i "s#{{ DB_PASSWORD }}#${CI_EXTERNAL_MYSQL_PASSWORD:-$MYSQL_ROOT_PASSWORD}#g" gogs/app.ini
-
     sed -i "s#{{ CI_DOMAIN_FULL }}#${CI_BASED_PORT_DRONE_HOST:-192.168.199.100}#g" gogs/app.ini
+
     sed -i "s#{{ PROTOCOL }}#http#g" gogs/app.ini
     sed -i "s!^CERT_FILE.*!#CERT_FILE!g" gogs/app.ini
     sed -i "s!^KEY_FILE.*!#KEY_FILE!g" gogs/app.ini
     sed -i "s!^TLS_MIN_VERSION.*!#TLS_MIN_VERSION!g" gogs/app.ini
+
+    sed -i "s#{{ SSH_PORT }}#${CI_SSH_PORT:-8022}#g" registry/config.yml
 
     sed -i "s#{{ REDIS_HOST }}#${CI_EXTERNAL_REDIS_HOST:-$REDIS_HOST}#g" registry/config.yml
     sed -i "s#{{ WEBHOOKS_HOST }}#${WEBHOOKS_HOST:-http://192.168.199.100}#g" registry/config.yml
@@ -130,13 +134,8 @@ _up-tls(){
 
     sed -i "s#{{ CI_DOMAIN }}#${CI_DOMAIN:-t.khs1994.com}#g" gogs/app.ini
 
-    sed -i "s#{{ DB_TYPE }}#${CI_DB_TYPE:-mysql}#g" gogs/app.ini
-    sed -i "s#{{ DB_HOST }}#${CI_EXTERNAL_MYSQL_HOST:-mysql}:${CI_EXTERNAL_MYSQL_PORT:-3306}#g" gogs/app.ini
-    sed -i "s#{{ DB_DATABASE }}#${CI_EXTERNAL_MYSQL_DATABASE:-$MYSQL_DATABASE}#g" gogs/app.ini
-    sed -i "s#{{ DB_USERNAME }}#${CI_EXTERNAL_MYSQL_USERNAME:-root}#g" gogs/app.ini
-    sed -i "s#{{ DB_PASSWORD }}#${CI_EXTERNAL_MYSQL_PASSWORD:-$MYSQL_ROOT_PASSWORD}#g" gogs/app.ini
-
     sed -i "s#{{ CI_DOMAIN_FULL }}#git.${CI_DOMAIN:-t.khs1994.com}#g" gogs/app.ini
+
     sed -i "s#{{ PROTOCOL }}#https#g" gogs/app.ini
 
     sed -i "s#{{ REDIS_HOST }}#${CI_EXTERNAL_REDIS_HOST:-$REDIS_HOST}#g" registry/config.yml
@@ -144,7 +143,13 @@ _up-tls(){
 
     sed -i "s#{{ DRONE_HOST }}#https://drone.${CI_DOMAIN:-t.khs1994.com}#g" docker-compose.override.yml
     sed -i "s#{{ DRONE_GOGS_URL }}#https://git.${CI_DOMAIN:-t.khs1994.com}#g" docker-compose.override.yml
-    docker-compose ${COMPOSE_FILE:-} up ${opt:-} ${CI_INCLUDE:-drone-server drone-agent gogs registry}
+
+    sed -i "s#{{ CI_DOMAIN }}#${CI_DOMAIN:-t.khs1994.com}#g" config/nginx/docker-registry.conf
+    sed -i "s#{{ CI_DOMAIN }}#${CI_DOMAIN:-t.khs1994.com}#g" config/nginx/drone.conf
+    sed -i "s#{{ CI_DOMAIN }}#${CI_DOMAIN:-t.khs1994.com}#g" config/nginx/gogs.conf
+
+    docker-compose ${COMPOSE_FILE:-} up ${opt:-} ${CI_INCLUDE:-drone-server drone-agent gogs registry} \
+       $( test "$ENABLE_NGINX" = 'FALSE' || echo 'nginx' )
 }
 
 _tls-config(){
@@ -155,7 +160,17 @@ _down(){
   docker-compose down --remove-orphans
 }
 
+_logs(){
+  if ! [ -f logs/nginx/access.log ];then
+    mkdir -p logs/nginx
+    touch logs/nginx/access.log
+    touch logs/nginx/error.log
+  fi
+}
+
 set -e
+
+_logs
 
 if [ "$DEBUG" = 'true' ];then set -x; fi
 
@@ -180,6 +195,7 @@ do
   test $arg = '--open-port' && COMPOSE_FILE='-f docker-compose.yml -f docker-compose.override.yml -f docker-compose.port.yml'
   test $arg = '-d' && opt='-d'
   test $arg = '--reset' && ( _reset ; _init )
+  test $arg = '--use-external-nginx' && ENABLE_NGINX=FALSE
 done
 
 _$command "$@"
