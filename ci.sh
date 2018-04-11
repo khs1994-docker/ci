@@ -1,39 +1,145 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
-if [ ! -f .env ];then cp .env.example .env; fi
-if [ ! -f app.prod.ini ];then cp gogs/app.ini gogs/app.prod.ini; fi
-if [ ! -f registry/config.yml ];then cp registry/config.default.yml registry/config.yml; fi
-if [ ! -f gogs/app.port.ini ];then cp gogs/app.port.example.ini gogs/app.port.ini; fi
-if [ ! -f registry/config.port.yml ];then cp registry/config.port.example.yml registry/config.port.yml; fi
+print_help_info(){
+  exec echo "
+CI-CLI v18.06
 
-cd webhooks
+Official WebSite https://ci.khs1994.com
 
-if [ ! -f .env ];then cp .env.example .env; fi
-if [ ! -f update.js ];then cp update.example.js update.js; fi
-if [ ! -f update.sh ];then cp update.example.sh update.sh; fi
+Usage: ./ci.sh COMMAND
 
-cd ../
+Commands:
 
-command -v docker-compose > /dev/null 2>&1
+  change-mysql-root-password
 
-if [ $? -ne 0 ];then echo "docker-compose not install"; exit 1; fi
+  up
 
-if [ "$1" = "production" ];then
-  echo "You are in Production, Please exec\n"
-  exec echo "$ docker-compose -f docker-compose.github.yml -f docker-compose.other.yml up -d\n"
-fi
+  config
 
-if [ "$1" = "swarm" ];then
-  exec echo "\nYou are in Swarm mode, Please exec\n\n$ docker swarm init\n\n$ docker stack deploy -c docker-stack.yml ci\n"
-fi
+  up-tls
 
-if [ "$1" = "khs1994" ];then
-  exec echo "Please exec\n\n$ docker-compose -f docker-compose.yml -f docker-compose.khs1994.yml up -d\n"
-fi
+  tls-config
 
-if [ "$1" = 'down' ];then exec docker-compose down --remove-orphans; fi
+  down
 
-echo "Maybe You are in Local Development, please exec
+  swarm-deploy
 
-$ docker-compose -f docker-compose.gogs.yml -f docker-compose.other.yml up -d
+  swarm-remove
+
+  k8s-deploy
+
+  k8s-remove
+
+  reset
+
+Read './docs/*.md' for more information about CLI commands.
+
+You can open issue in [ https://github.com/khs1994-docker/ci/issues ] when you meet problems.
+
+You must Update .env file when update this project.
+
+Donate https://zan.khs1994.com
 "
+}
+
+_cp(){
+  if [ ! -f $1 ];then cp $2 $1; fi
+}
+
+_init(){
+  _cp .env .env.example
+  _cp gogs/app.ini gogs/app.example.ini
+  _cp registry/config.yml registry/config.example.yml
+
+  cd webhooks
+
+  _cp .env .env.example
+  _cp update.js update.example.js
+  _cp update.sh update.example.sh
+
+  cd ../
+
+  command -v docker-compose > /dev/null 2>&1
+
+  if [ $? -ne 0 ];then exec echo "docker-compose not install" ; fi
+}
+
+_reset(){
+  rm -rf .env \
+      gogs/app.ini \
+      registry/config.yml \
+      webhooks/.env \
+      webhooks/update.js \
+      webhooks/update.sh
+}
+
+_change_mysql_root_password(){
+ echo 1
+}
+
+_up(){
+    `echo $SED` "s#{{ CI_DOMAIN }}#${CI_BASED_PORT_DRONE_HOST:-192.168.199.100}#g" gogs/app.ini
+
+    `echo $SED` "s#{{ DB_TYPE }}#${CI_DB_TYPE:-mysql}#g" gogs/app.ini
+    `echo $SED` "s#{{ DB_HOST }}#${CI_EXTERNAL_MYSQL_HOST:-mysql}:${CI_EXTERNAL_MYSQL_PORT:-3306}#g" gogs/app.ini
+    `echo $SED` "s#{{ DB_DATABASE }}#${CI_EXTERNAL_MYSQL_DATABASE:-$MYSQL_DATABASE}#g" gogs/app.ini
+    `echo $SED` "s#{{ DB_USERNAME }}#${CI_EXTERNAL_MYSQL_USERNAME:-root}#g" gogs/app.ini
+    `echo $SED` "s#{{ DB_PASSWORD }}#${CI_EXTERNAL_MYSQL_PASSWORD:-$MYSQL_ROOT_PASSWORD}#g" gogs/app.ini
+
+    `echo $SED` "s#{{ CI_DOMAIN_FULL }}#${CI_BASED_PORT_DRONE_HOST:-192.168.199.100}#g" gogs/app.ini
+    `echo $SED` "s#{{ PROTOCOL }}#http#g" gogs/app.ini
+    `echo $SED` "s!^CERT_FILE.*!#CERT_FILE!g" gogs/app.ini
+    `echo $SED` "s!^KEY_FILE.*!#KEY_FILE!g" gogs/app.ini
+    `echo $SED` "s!^TLS_MIN_VERSION.*!#TLS_MIN_VERSION!g" gogs/app.ini
+
+    `echo $SED` "s#{{ MAIL_HOST }}#${CI_MAIL_HOST}#g" gogs/app.ini
+    `echo $SED` "s#{{ MAIL_FROM }}#${CI_MAIL_FROM}#g" gogs/app.ini
+    `echo $SED` "s#{{ MAIL_USERNAME }}#${CI_MAIL_USERNAME}#g" gogs/app.ini
+    `echo $SED` "s#{{ MAIL_PASSWORD }}#${CI_MAIL_PASSWORD}#g" gogs/app.ini
+    # docker-compose up ${CI_INCLUDE:-drone-server drone-agent gogs registry}
+}
+
+_up-tls(){
+    `echo $SED` "s#{{ CI_DOMAIN }}#${CI_DOMAIN:-t.khs1994.com}#g" gogs/app.ini
+
+    `echo $SED` "s#{{ DB_TYPE }}#${CI_DB_TYPE:-mysql}#g" gogs/app.ini
+    `echo $SED` "s#{{ DB_HOST }}#${CI_EXTERNAL_MYSQL_HOST:-mysql}:${CI_EXTERNAL_MYSQL_PORT:-3306}#g" gogs/app.ini
+    `echo $SED` "s#{{ DB_DATABASE }}#${CI_EXTERNAL_MYSQL_DATABASE:-$MYSQL_DATABASE}#g" gogs/app.ini
+    `echo $SED` "s#{{ DB_USERNAME }}#${CI_EXTERNAL_MYSQL_USERNAME:-root}#g" gogs/app.ini
+    `echo $SED` "s#{{ DB_PASSWORD }}#${CI_EXTERNAL_MYSQL_PASSWORD:-$MYSQL_ROOT_PASSWORD}#g" gogs/app.ini
+
+    `echo $SED` "s#{{ CI_DOMAIN_FULL }}#git.${CI_BASED_PORT_DRONE_HOST:-t.khs1994.com}#g" gogs/app.ini
+    `echo $SED` "s#{{ PROTOCOL }}#https#g" gogs/app.ini
+
+    `echo $SED` "s#{{ MAIL_HOST }}#${CI_MAIL_HOST}#g" gogs/app.ini
+    `echo $SED` "s#{{ MAIL_FROM }}#${CI_MAIL_FROM}#g" gogs/app.ini
+    `echo $SED` "s#{{ MAIL_USERNAME }}#${CI_MAIL_USERNAME}#g" gogs/app.ini
+    `echo $SED` "s#{{ MAIL_PASSWORD }}#${CI_MAIL_PASSWORD}#g" gogs/app.ini
+    # docker-compose up ${CI_INCLUDE:-drone-server drone-agent gogs registry}
+}
+
+_down(){
+  docker-compose down --remove-orphans
+}
+
+set -ex
+
+OS=`uname -s`
+
+SED='sed -i '
+
+test $OS = 'Darwin' && SED='sed -i "" '
+
+_init
+
+. .env
+
+. ~/.bash_profile || echo
+
+test ! -z "$1" || print_help_info
+
+command=$1
+
+shift
+
+_$command "$@"

@@ -2,84 +2,47 @@
 # CI/CD 私有化部署基于端口版
 #
 
-version: "3.5"
+version: "3.6"
+
+x-common:
+  $default-common
+  restart: always
+  networks:
+    - backend
 
 services:
 
   drone-server:
-    image: drone/drone:${DRONE_VERSION}
-    restart: always
+    << : *default-common
+    image: drone/drone:${CI_DRONE_VERSION:-0.8.5}
     ports:
-      #
-      # 如果没启用 https 则内部端口开放的是 8000 不是 80
-      #
       # - 80:80
       # - 443:443
-      - "${DRONE_HOST_BASED_PORT}:${DRONE_PORT_BASED_PORT}:8000"
+      - "${CI_BASED_PORT_DRONE_HOST}:${CI_BASED_PORT_DRONE_PORT:-8000}:8000"
       # - 9000:9000
     volumes:
       - drone-data:/var/lib/drone/:rw
     networks:
       - frontend
       - backend
-    environment:
-      #
-      #
-      # Gogs 默认，与 GitHub 二选一
-      #
-      #
-
-      - DRONE_OPEN=true
-      - DRONE_HOST=http://${DRONE_HOST_BASED_PORT}
-      - DRONE_GOGS=true
-      - DRONE_GOGS_URL=http://${DRONE_HOST_BASED_PORT}:3000
-      - DRONE_SECRET=${DRONE_SECRET}
-      - DRONE_GOGS_PRIVATE_MODE=true
-
-      #
-      #
-      # GitHub
-      #
-      #
-      # - DRONE_OPEN=false
-      # - DRONE_ADMIN=khs1994,khs1994-merge-robot
-      # - DRONE_HOST=${DRONE_HOST_PRO}
-      # - DRONE_GITHUB=true
-      # - DRONE_GITHUB_CLIENT=${DRONE_GITHUB_CLIENT_PRO}
-      # - DRONE_GITHUB_SECRET=${DRONE_GITHUB_SECRET_PRO}
-
-      #
-      #
-      # coding
-      #
-      # 出现致命错误，请勿使用
-      #
-      #
-      # - DRONE_OPEN=true
-      # - DRONE_HOST=${DRONE_HOST_PRO}
-      # - DRONE_CODING=true
-      # - DRONE_CODING_CLIENT=${DRONE_CODING_CLIENT}
-      # - DRONE_CODING_SECRET=${DRONE_CODING_SECRET}
-      # - DRONE_SECRET=${DRONE_SECRET}
 
   drone-agent:
-    image: drone/agent:${DRONE_VERSION}
-    restart: always
+    << : *default-common
+    image: drone/agent:${CI_DRONE_VERSION:-0.8.5}
     depends_on:
       - drone-server
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:rw
-    networks:
-      - backend
     environment:
       - DRONE_SECRET=${DRONE_SECRET}
       - DRONE_SERVER=drone-server:9000
 
   gogs:
+    << : *default-common
     image: gogs/gogs
     ports:
-      - "${DRONE_HOST_BASED_PORT}:${GOGS_SSH_PORT_BASED_PORT}:22"
-      - "${DRONE_HOST_BASED_PORT}:${GOGS_PORT_BASED_PORT}:3000"
+      - "${CI_BASED_PORT_DRONE_HOST}:${CI_BASED_PORT_GOGS_SSH_PORT}:22"
+      - "${CI_BASED_PORT_DRONE_HOST}:${CI_BASED_PORT_GOGS_PORT}:3000"
     networks:
       - frontend
       - backend
@@ -87,21 +50,11 @@ services:
       - gogs-data:/data:rw
       - ./gogs/app.port.ini:/data/gogs/conf/app.ini:ro
 
-  mysql:
-    image: mysql:8.0.3
-    env_file: config/mysql.env
-    ports:
-       - "${DRONE_HOST_BASED_PORT}:${MYSQL_PORT_BASED_PORT}:3306"
-    networks:
-      - backend
-    volumes:
-      - mysql-data:/var/lib/mysql:rw
-    command: ["mysqld","--character-set-server=utf8mb4"]
-
   registry:
+    << : *default-common
     image: registry
     ports:
-      - "${DRONE_HOST_BASED_PORT}:${REGISTRY_PORT_BASED_PORT}:5000:5000"
+      - "${CI_BASED_PORT_DRONE_HOST}:${CI_BASED_PORT_REGISTRY_PORT:-5000}:5000"
     networks:
       - frontend
       - backend
@@ -109,14 +62,29 @@ services:
       - ./registry/config.port.yml:/etc/docker/registry/config.yml:ro
       - registry-data:/var/lib/registry:rw
 
+  mysql:
+    << : *default-common
+    image: mysql:{CI_MYSQL_VERSION:-8.0.3}
+    env_file: .env
+    volumes:
+      - mysql-data:/var/lib/mysql:rw
+    command: ["mysqld","--character-set-server=utf8mb4"]
+
   redis:
-    image: redis:${REDIS_VERSION}-alpine
-    # ports:
-    #   - "${DRONE_HOST_BASED_PORT}:${REDIS_PORT_BASED_PORT}:16379:6379"
-    networks:
-      - backend
+    << : *default-common
+    image: redis:${CI_REDIS_VERSION:-4.0.9}-alpine
     volumes:
       - redis-data:/data
+
+  nginx:
+    image: nginx:${CI_NGINX_VERSION:-1.13.11}-alpine
+    networks:
+      - frontend
+    env_file: .env
+    ports:
+      - "443:443"
+    volumes:
+      - ./config/nginx:/etc/nginx/conf.d
 
 volumes:
   gogs-data:

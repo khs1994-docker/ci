@@ -1,3 +1,7 @@
+* 合并 compose 文件，通过 `CI-CLI` 控制
+
+* `Docker Compose` `1.20.1` `3.6`
+
 * 删除 `docker-compose.yml`，改为以 git 服务商为后缀的 `Compose` 文件
 
 * `Docker Compose` `1.18.0` `3.5`

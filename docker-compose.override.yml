@@ -1,0 +1,64 @@
+version: "3.6"
+
+x-khs1994:
+  environment:
+    - DRONE_GITHUB=true
+    - DRONE_OPEN=${DRONE_OPEN:-false}
+    - DRONE_HOST=http://${DRONE_HOST}
+    - DRONE_SECRET=${DRONE_SECRET}
+    - DRONE_ADMIN=khs1994,khs1994-merge-robot
+    - DRONE_HOST=http://khs1994.jios.org:18000
+    - DRONE_GITHUB_CLIENT=${DRONE_GITHUB_CLIENT_TEST}
+    - DRONE_GITHUB_SECRET=${DRONE_GITHUB_SECRET_TEST}
+    - DRONE_DATABASE_DRIVER=mysql
+    - DRONE_DATABASE_DATASOURCE=root:mytest@tcp(mysql:3306)/gogs?parseTime=true
+
+x-gogs:
+  &gogs
+  environment:
+    - DRONE_GOGS=true
+    - DRONE_OPEN=${DRONE_OPEN:-false}
+    - DRONE_HOST=http://${DRONE_HOST}
+    - DRONE_SECRET=${DRONE_SECRET}
+    - DRONE_GOGS_URL=http://${DRONE_HOST_BASED_PORT:-3000}:3000
+    - DRONE_GOGS_PRIVATE_MODE=${DRONE_GOGS_PRIVATE_MODE:-true}
+
+x-github:
+  &github
+  environment:
+    - DRONE_GITHUB=true
+    - DRONE_OPEN=${DRONE_OPEN:-false}
+    - DRONE_HOST=${DRONE_HOST}
+    - DRONE_SECRET=${DRONE_SECRET}
+    - DRONE_ADMIN=${DRONE_ADMIN}
+    - DRONE_GITHUB_CLIENT=${DRONE_GITHUB_CLIENT_PRO}
+    - DRONE_GITHUB_SECRET=${DRONE_GITHUB_SECRET_PRO}
+
+# Don't use this config
+x-coding:
+  &coding
+  environment:
+    - DRONE_CODING=true
+    - DRONE_OPEN=${DRONE_OPEN:-false}
+    - DRONE_HOST=${DRONE_HOST}
+    - DRONE_SECRET=${DRONE_SECRET}
+    - DRONE_CODING_CLIENT=${DRONE_CODING_CLIENT}
+    - DRONE_CODING_SECRET=${DRONE_CODING_SECRET}
+
+x-gitlab:
+  &gitlab
+  environment:
+    - DRONE_GITLAB=true
+    - DRONE_OPEN=${DRONE_OPEN:-false}
+    - DRONE_HOST=${DRONE_HOST}
+    - DRONE_SECRET=${DRONE_SECRET}
+    - DRONE_GITLAB_CLIENT=fe548feb7819435d8f7c9236cf4ca30c
+    - DRONE_GITLAB_SECRET=232a1ef9dd9148cbbf4034eb40f9736b
+    - DRONE_GITLAB_URL=https://git.cloud.tencent.com
+
+services:
+  drone-server:
+    << : *gogs
+    # << : *github
+    # << : *coding
+    # << : *khs1994

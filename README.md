@@ -28,19 +28,23 @@
 
 本 `REAADME.md` 的教程通过端口来提供不同的服务，如果你想要通过域名（`With TLS`）来提供不同的服务，请查看 [README.TLS.md](README.TLS.md) 文件。
 
-## 端口暴露
+## 端口开放
 
-* `Gogs` **3000** **1022**
+> 原则，能不开放尽量不开放（例如数据库、缓存）。
+
+* `Gogs` **3000** **8022**
 
 * `Drone` **8000**
 
 * `Docker Registry` **5000**
 
-* `MYSQL` **13306**(默认不暴露)
+* `MYSQL` **13306**(默认不开放)
 
-* `REDIS` **16379**(默认不暴露)
+* `REDIS` **16379**(默认不开放)
 
-## 修改配置
+## 快速开始
+
+### 修改配置
 
 执行以下命令完成初始化，然后修改配置。
 
@@ -48,25 +52,29 @@
 $ ./ci.sh
 ```
 
-修改 `.env` 中的 `DRONE_HOST_BASED_PORT` 为 `你自己的 IP`(例如 `云服务器公网 IP`、`路由器分配给电脑的 IP`)
+修改 `.env` 中的 `CI_BASED_PORT_DRONE_HOST` 变量值为 `你自己的 IP`(例如 `云服务器公网 IP`、`路由器分配给电脑的 IP`)
 
-`gogs/app.port.ini` `registry/config.port.yml`
+### MySQL 密码
 
-搜索 `192.168.199.100` 为 `你自己的 IP`
+修改 `.env` 中的 `MYSQL_ROOT_PASSWORD` 变量值为 MySQL 密码。
 
-在 `config/mysql.env` 中配置密码，对应的也要修改 `gogs/app.port.ini` 中的 MySQL 密码（`PASSWD` 项）。
+### 启用软件
+
+修改 `.env` 中的 `CI_INCLUDE` 变量。
+
+### 使用外部服务？
 
 ## 启动
 
 ```bash
-$ docker-compose up -d
+$ ./ci.sh up [-d]
 ```
 
 ## 访问服务
 
 * git HTTP **3000**
 
-* git SSH **1022**
+* git SSH **8022**
 
 * drone **8000**
 
