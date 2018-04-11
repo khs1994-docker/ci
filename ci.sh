@@ -37,3 +37,37 @@ echo "Maybe You are in Local Development, please exec
 
 $ docker-compose -f docker-compose.gogs.yml -f docker-compose.other.yml up -d
 "
+
+print_help_info(){
+  ecxe echo -e "
+Docker-CI CLI v18.06
+
+Official WebSite https://ci.khs1994.com
+
+Usage: ./ci.sh COMMAND
+
+Commands:
+
+  change-mysql-root-password
+
+  up
+
+  down
+
+  swarm-deploy
+
+  swarm-remove
+
+  k8s-deploy
+
+  k8s-remove
+
+Read './docs/*.md' for more information about CLI commands.
+
+You can open issue in [ https://github.com/khs1994-docker/ci/issues ] when you meet problems.
+
+You must Update .env file when update this project.
+
+Donate https://zan.khs1994.com
+"
+}
