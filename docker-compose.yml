@@ -1,7 +1,3 @@
-#
-# CI/CD 私有化部署基于端口版
-#
-
 version: "3.6"
 
 x-common:
