@@ -8,17 +8,25 @@ Official WebSite https://ci.khs1994.com
 
 Usage: ./ci.sh COMMAND
 
-Debug: [env] DEBUG=1 ./ci.sh COMMAND
+Debug: [env] DEBUG=1 ./ci.sh COMMAND options
+
+Options:
+
+  --port-port            开放 MySQL Redis 端口
+
+  -d                     后台运行
+
+  --use-external-nginx   使用外部 NGINX = 后边值为配置文件路径 (TLS Only)
 
 Commands:
 
   change-mysql-root-password
 
-  up           [-d]   [--open-port]   [--reset]
+  up           [-d]   [--open-port]
 
   config              [--open-port]
 
-  up-tls       [-d]   [--open-port]   [--reset]  [--use-external-nginx=/etc/nginx/conf.d]
+  up-tls       [-d]   [--open-port]  [--use-external-nginx=/etc/nginx/conf.d]
 
   tls-config          [--open-port]
 
@@ -32,7 +40,7 @@ Commands:
 
   k8s-remove
 
-  reset
+  reset           恢复原始状态
 
 Read './docs/*.md' for more information about CLI commands.
 
@@ -50,11 +58,14 @@ _cp(){
 
 _init(){
   _cp .env .env.example
-  _cp gogs/app.ini gogs/app.example.ini
-  _cp registry/config.yml registry/config.example.yml
   _cp docker-compose.override.yml docker-compose.override.demo.yml
 
-  cd webhooks
+  cd config
+
+  _cp gogs/app.ini gogs/app.example.ini
+  _cp registry/config.yml registry/config.example.yml
+
+  cd ../webhooks
 
   _cp .env .env.example
   _cp update.js update.example.js
@@ -75,15 +86,18 @@ _init(){
   if [ $? -ne 0 ];then exec echo "docker-compose not install" ; fi
 }
 
-_reset(){
-  rm -rf .env \
-      docker-compose.override.yml \
+_reset_(){
+  rm -rf docker-compose.override.yml \
       gogs/app.ini \
       registry/config.yml \
-      webhooks/.env \
       webhooks/update.js \
       webhooks/update.sh \
       config/nginx/*.conf
+}
+
+_reset(){
+  _reset_
+  rm -rf .env webhooks/.env
 }
 
 _change_mysql_root_password(){
@@ -91,23 +105,25 @@ _change_mysql_root_password(){
 }
 
 _sed_common(){
+  cd config
   sed -i "s#{{ DB_TYPE }}#${CI_DB_TYPE:-mysql}#g" gogs/app.ini
   sed -i "s#{{ DB_HOST }}#${CI_EXTERNAL_MYSQL_HOST:-mysql}:${CI_EXTERNAL_MYSQL_PORT:-3306}#g" gogs/app.ini
   sed -i "s#{{ DB_DATABASE }}#${CI_EXTERNAL_MYSQL_DATABASE:-$MYSQL_DATABASE}#g" gogs/app.ini
   sed -i "s#{{ DB_USERNAME }}#${CI_EXTERNAL_MYSQL_USERNAME:-root}#g" gogs/app.ini
   sed -i "s#{{ DB_PASSWORD }}#${CI_EXTERNAL_MYSQL_PASSWORD:-$MYSQL_ROOT_PASSWORD}#g" gogs/app.ini
 
-  sed -i "s#{{ SSH_PORT }}#${CI_GOGS_SSH_PORT:-8022}#g" registry/config.yml
+  sed -i "s#{{ SSH_PORT }}#${CI_GOGS_SSH_PORT:-8022}#g" gogs/app.ini
 
   sed -i "s#{{ MAIL_HOST }}#${CI_MAIL_HOST}#g" gogs/app.ini
   sed -i "s#{{ MAIL_FROM }}#${CI_MAIL_FROM}#g" gogs/app.ini
   sed -i "s#{{ MAIL_USERNAME }}#${CI_MAIL_USERNAME}#g" gogs/app.ini
   sed -i "s#{{ MAIL_PASSWORD }}#${CI_MAIL_PASSWORD}#g" gogs/app.ini
+  cd -
 }
 
 _up(){
     _sed_common
-
+    cd config
     sed -i "s#{{ CI_DOMAIN }}#${CI_HOST:-192.168.199.100}#g" gogs/app.ini
 
     sed -i "s#{{ CI_DOMAIN_FULL }}#${CI_HOST:-192.168.199.100}#g" gogs/app.ini
@@ -119,9 +135,10 @@ _up(){
 
     sed -i "s#{{ REDIS_HOST }}#${CI_EXTERNAL_REDIS_HOST:-$REDIS_HOST}#g" registry/config.yml
     sed -i "s#{{ WEBHOOKS_HOST }}#${WEBHOOKS_HOST:-http://192.168.199.100}#g" registry/config.yml
-
+    cd -
     sed -i "s#{{ DRONE_HOST }}#http://${CI_HOST:-192.168.199.100}:${CI_DRONE_PORT:-8000}#g" docker-compose.override.yml
     sed -i "s#{{ DRONE_GOGS_URL }}#http://${CI_HOST:-192.168.199.100}:${CI_GOGS_PORT:-3000}#g" docker-compose.override.yml
+
     docker-compose ${COMPOSE_FILE:-} up ${opt:-} ${CI_INCLUDE:-drone-server drone-agent gogs registry}
 }
 
@@ -131,7 +148,7 @@ _config(){
 
 _up-tls(){
     _sed_common
-
+    cd config
     sed -i "s#{{ CI_DOMAIN }}#${CI_DOMAIN:-t.khs1994.com}#g" gogs/app.ini
 
     sed -i "s#{{ CI_DOMAIN_FULL }}#git.${CI_DOMAIN:-t.khs1994.com}#g" gogs/app.ini
@@ -140,7 +157,7 @@ _up-tls(){
 
     sed -i "s#{{ REDIS_HOST }}#${CI_EXTERNAL_REDIS_HOST:-$REDIS_HOST}#g" registry/config.yml
     sed -i "s#{{ WEBHOOKS_HOST }}#${WEBHOOKS_HOST:-https://ci.t.khs1994.com/docker/webhooks}#g" registry/config.yml
-
+    cd -
     sed -i "s#{{ DRONE_HOST }}#https://drone.${CI_DOMAIN:-t.khs1994.com}#g" docker-compose.override.yml
     sed -i "s#{{ DRONE_GOGS_URL }}#https://git.${CI_DOMAIN:-t.khs1994.com}#g" docker-compose.override.yml
 
@@ -227,7 +244,6 @@ for arg in "$@"
 do
   test $arg = '--open-port' && COMPOSE_FILE='-f docker-compose.yml -f docker-compose.override.yml -f docker-compose.port.yml'
   test $arg = '-d' && opt='-d'
-  test $arg = '--reset' && ( _reset ; _init )
   [[ $arg = '--use-external-nginx=*' ]] && ( ENABLE_NGINX=FALSE ; NGINX_CONF=$( echo $arg | cut -f '=' -d 2 ) )
 done
 
