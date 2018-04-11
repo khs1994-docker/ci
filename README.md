@@ -14,9 +14,11 @@
 
 **3** Drone 自动拉取代码完成编译，部署 (Drone 本质就是在指定的容器中运行指定的命令，通过项目根目录中的 `.drone.yml` 文件指定)。
 
+**4** 支持哪些编程语言？理论上支持所有的编程语言！
+
 ## TLS
 
-本 `REAADME.md` 的教程通过端口来提供不同的服务，如果你想要通过域名（`With TLS`）来提供不同的服务，请查看 [README.TLS.md](README.TLS.md)。
+本教程通过端口来提供不同的服务，如果你想要通过域名（`With TLS`）来提供不同的服务，请查看 [README.TLS.md](README.TLS.md)。
 
 ## 准备
 
@@ -81,7 +83,7 @@ services:
 ## 启动
 
 ```bash
-$ ./ci.sh up [-d]
+$ ./ci.sh up [-d] [--reset]
 ```
 
 ## 访问服务

@@ -65,5 +65,5 @@ $ ./ci.sh
 ### 启动
 
 ```bash
-$ ./ci.sh up-tls
+$ ./ci.sh up-tls [-d] [--reset]
 ```
