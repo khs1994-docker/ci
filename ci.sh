@@ -97,6 +97,8 @@ _sed_common(){
   sed -i "s#{{ DB_USERNAME }}#${CI_EXTERNAL_MYSQL_USERNAME:-root}#g" gogs/app.ini
   sed -i "s#{{ DB_PASSWORD }}#${CI_EXTERNAL_MYSQL_PASSWORD:-$MYSQL_ROOT_PASSWORD}#g" gogs/app.ini
 
+  sed -i "s#{{ SSH_PORT }}#${CI_GOGS_SSH_PORT:-8022}#g" registry/config.yml
+
   sed -i "s#{{ MAIL_HOST }}#${CI_MAIL_HOST}#g" gogs/app.ini
   sed -i "s#{{ MAIL_FROM }}#${CI_MAIL_FROM}#g" gogs/app.ini
   sed -i "s#{{ MAIL_USERNAME }}#${CI_MAIL_USERNAME}#g" gogs/app.ini
@@ -106,22 +108,20 @@ _sed_common(){
 _up(){
     _sed_common
 
-    sed -i "s#{{ CI_DOMAIN }}#${CI_BASED_PORT_DRONE_HOST:-192.168.199.100}#g" gogs/app.ini
+    sed -i "s#{{ CI_DOMAIN }}#${CI_HOST:-192.168.199.100}#g" gogs/app.ini
 
-    sed -i "s#{{ CI_DOMAIN_FULL }}#${CI_BASED_PORT_DRONE_HOST:-192.168.199.100}#g" gogs/app.ini
+    sed -i "s#{{ CI_DOMAIN_FULL }}#${CI_HOST:-192.168.199.100}#g" gogs/app.ini
 
     sed -i "s#{{ PROTOCOL }}#http#g" gogs/app.ini
     sed -i "s!^CERT_FILE.*!#CERT_FILE!g" gogs/app.ini
     sed -i "s!^KEY_FILE.*!#KEY_FILE!g" gogs/app.ini
     sed -i "s!^TLS_MIN_VERSION.*!#TLS_MIN_VERSION!g" gogs/app.ini
 
-    sed -i "s#{{ SSH_PORT }}#${CI_SSH_PORT:-8022}#g" registry/config.yml
-
     sed -i "s#{{ REDIS_HOST }}#${CI_EXTERNAL_REDIS_HOST:-$REDIS_HOST}#g" registry/config.yml
     sed -i "s#{{ WEBHOOKS_HOST }}#${WEBHOOKS_HOST:-http://192.168.199.100}#g" registry/config.yml
 
-    sed -i "s#{{ DRONE_HOST }}#http://${CI_BASED_PORT_DRONE_HOST:-192.168.199.100}:${CI_BASED_PORT_DRONE_PORT}#g" docker-compose.override.yml
-    sed -i "s#{{ DRONE_GOGS_URL }}#http://${CI_BASED_PORT_DRONE_HOST:-192.168.199.100}:${CI_BASED_PORT_GOGS_PORT=3000}#g" docker-compose.override.yml
+    sed -i "s#{{ DRONE_HOST }}#http://${CI_HOST:-192.168.199.100}:${CI_DRONE_PORT:-8000}#g" docker-compose.override.yml
+    sed -i "s#{{ DRONE_GOGS_URL }}#http://${CI_HOST:-192.168.199.100}:${CI_GOGS_PORT:-3000}#g" docker-compose.override.yml
     docker-compose ${COMPOSE_FILE:-} up ${opt:-} ${CI_INCLUDE:-drone-server drone-agent gogs registry}
 }
 
@@ -147,6 +147,39 @@ _up-tls(){
     sed -i "s#{{ CI_DOMAIN }}#${CI_DOMAIN:-t.khs1994.com}#g" config/nginx/docker-registry.conf
     sed -i "s#{{ CI_DOMAIN }}#${CI_DOMAIN:-t.khs1994.com}#g" config/nginx/drone.conf
     sed -i "s#{{ CI_DOMAIN }}#${CI_DOMAIN:-t.khs1994.com}#g" config/nginx/gogs.conf
+
+    _sed_external_nginx(){
+      # 使用外部 NGINX
+      cd config/nginx
+      for file in `ls *.conf`
+      do
+        sed -i "s#{{ CI_DOMAIN }}#${CI_DOMAIN:-t.khs1994.com}#g" $file
+        sed -i "s#{{ REGISTRY_UPSTREAM }}#${CI_HOST:-192.168.199.100}#g" $file
+        sed -i "s#{{ DRONE_UPSTREAM }}#${CI_HOST:-192.168.199.100}#g" $file
+        sed -i "s#{{ GOGS_UPSTREAM }}#${CI_HOST:-192.168.199.100}#g" $file
+      done
+        ln -sf *.conf NGINX_CONF
+      cd -
+    }
+
+    _sed_nginx(){
+      # 使用内部 NGINX
+      cd config/nginx
+      for file in `ls *.conf`
+      do
+        sed -i "s#{{ CI_DOMAIN }}#${CI_DOMAIN:-t.khs1994.com}#g" $file
+        sed -i "s#{{ REGISTRY_UPSTREAM }}#registry#g" $file
+        sed -i "s#{{ DRONE_UPSTREAM }}#drone-server#g" $file
+        sed -i "s#{{ GOGS_UPSTREAM }}#gogs#g" $file
+      done
+      cd -
+    }
+
+    set +e
+    test "$ENABLE_NGINX" = 'FALSE' && _sed_external_nginx
+    set -e
+
+    test "$ENABLE_NGINX" = 'FALSE' || _sed_nginx
 
     docker-compose ${COMPOSE_FILE:-} up ${opt:-} ${CI_INCLUDE:-drone-server drone-agent gogs registry} \
        $( test "$ENABLE_NGINX" = 'FALSE' || echo 'nginx' )
@@ -195,7 +228,7 @@ do
   test $arg = '--open-port' && COMPOSE_FILE='-f docker-compose.yml -f docker-compose.override.yml -f docker-compose.port.yml'
   test $arg = '-d' && opt='-d'
   test $arg = '--reset' && ( _reset ; _init )
-  test $arg = '--use-external-nginx' && ENABLE_NGINX=FALSE
+  [[ $arg = '--use-external-nginx=*' ]] && ( ENABLE_NGINX=FALSE ; NGINX_CONF=$( echo $arg | cut -f '=' -d 2 ) )
 done
 
 _$command "$@"

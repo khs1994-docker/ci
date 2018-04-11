@@ -50,7 +50,7 @@ $ cd ci
 $ ./ci.sh
 ```
 
-修改 `.env` 中的 `CI_BASED_PORT_DRONE_HOST` 变量值为 `你自己的 IP`(例如 `云服务器公网 IP`、`路由器分配给电脑的 IP`)
+修改 `.env` 中的 `CI_HOST` 变量值为 `你自己的 IP`(例如 `云服务器公网 IP`、`路由器分配给电脑的 IP`)
 
 ### MySQL 密码
 
