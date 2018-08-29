@@ -20,7 +20,7 @@
 
 ## TLS
 
-本教程通过 IP + 不同端口 来提供不同的服务，如果你想要通过域名（`With TLS`）来提供不同的服务，请查看 [README.TLS.md](README.TLS.md)。
+本教程通过 IP + 不同端口 来提供不同的服务，如果你想要通过域名（`TLS`）来提供不同的服务，请查看 [README.TLS.md](README.TLS.md)。
 
 ## 准备
 
@@ -52,9 +52,11 @@ $ cd ci
 $ ./ci
 ```
 
+### 配置 hosts
+
 修改 `.env` 中的 `CI_HOST` 变量值为 `你自己的 IP`(例如 `云服务器公网 IP`、`路由器分配给电脑的 IP`)
 
-### MySQL 密码
+### MySQL 密码(可选)
 
 修改 `secrets/mysql.env` 中的 `MYSQL_ROOT_PASSWORD` 变量值为 MySQL 密码。
 
@@ -62,7 +64,7 @@ $ ./ci
 
 修改 `.env` 中的 `CI_INCLUDE` 变量。
 
-### 使用外部服务？
+### 使用外部服务？(高级选项)
 
 编辑 `.env` 文件，编辑 `CI_INCLUDE` 变量，去掉内置的软件名，之后填写外部服务的相关配置
 

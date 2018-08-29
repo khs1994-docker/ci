@@ -146,7 +146,7 @@ _up(){
       CI_INCLUDE_TARGET+="$soft "
     done
 
-    docker-compose ${COMPOSE_FILE:-} up ${opt:-} ${CI_INCLUDE_TARGET}
+    docker-compose ${COMPOSE_FILE:-} up ${opt:-} ${CI_INCLUDE_TARGET} drone-server drone-agent
 }
 
 _config(){
@@ -212,7 +212,7 @@ _up-tls(){
 
     test "$ENABLE_NGINX" = 'FALSE' || _sed_nginx
 
-    docker-compose ${COMPOSE_FILE:-} up ${opt:-} ${CI_INCLUDE:-drone-server drone-agent gogs registry} \
+    docker-compose ${COMPOSE_FILE:-} up ${opt:-} ${CI_INCLUDE:-gogs registry} drone-server drone-agent \
        $( test "$ENABLE_NGINX" = 'FALSE' || echo 'nginx' )
 }
 
