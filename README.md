@@ -8,7 +8,7 @@
 
 * [更多信息](https://www.khs1994.com/categories/CI/Drone/)
 
-## 如何工作
+## CI & DevOps 工作流程
 
 **1.** 本地制作 Docker 镜像推送到私有仓库（Docker Registry）
 
@@ -18,11 +18,13 @@
 
 **4** 支持哪些编程语言？理论上支持所有的编程语言！
 
-## TLS
+## With TLS ?
 
 本教程通过 IP + 不同端口 来提供不同的服务，如果你想要通过域名（`TLS`）来提供不同的服务，请查看 [README.TLS.md](README.TLS.md)。
 
 ## 准备
+
+* 了解 CI，了解 Travis CI (Drone 和大多数 CI 工具一样，不过 Drone 可以免费的进行私有部署)
 
 * 有公网 IP 的云服务器（推荐，但不是必须）
 
