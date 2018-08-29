@@ -26,9 +26,9 @@
 
 * 有公网 IP 的云服务器（推荐，但不是必须）
 
-* Docker CE v18.03 Stable +
+* Docker CE v18.06 Stable +
 
-* docker-compose v1.20.1 +
+* docker-compose v1.22.0 +
 
 * 知道如何注册 GitHub App (GitHub only)
 
@@ -49,7 +49,7 @@ $ cd ci
 执行以下命令完成初始化，然后修改配置。
 
 ```bash
-$ ./ci.sh
+$ ./ci
 ```
 
 修改 `.env` 中的 `CI_HOST` 变量值为 `你自己的 IP`(例如 `云服务器公网 IP`、`路由器分配给电脑的 IP`)
@@ -101,7 +101,7 @@ services:
 ## 启动
 
 ```bash
-$ ./ci.sh up [-d] [--reset]
+$ ./ci up [-d] [--reset]
 ```
 
 ## 访问服务

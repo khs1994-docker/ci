@@ -2,17 +2,17 @@
 
 print_help_info(){
   exec echo "
-CI-CLI v18.06
+CI-CLI 0.8.6
 
-Official WebSite https://ci.khs1994.com
+Donate WebSite https://zan.khs1994.com
 
-Usage: ./ci.sh COMMAND
+Usage: ./ci COMMAND
 
-Debug: [env] DEBUG=1 ./ci.sh COMMAND options
+Debug: [env] DEBUG=1 ./ci COMMAND options
 
 Options:
 
-  --port-port            开放 MySQL Redis 端口
+  --open-port            开放 MySQL Redis 端口
 
   -d                     后台运行
 
@@ -23,22 +23,17 @@ Commands:
   change-mysql-root-password
 
   up           [-d]   [--open-port]
-
   config              [--open-port]
-
-  up-tls       [-d]   [--open-port]  [--use-external-nginx=/etc/nginx/conf.d]
-
-  tls-config          [--open-port]
-
   down
 
-  swarm-deploy
+  up-tls       [-d]   [--open-port]  [--use-external-nginx=/etc/nginx/conf.d]
+  tls-config          [--open-port]
 
+  swarm-deploy
   swarm-remove
 
-  k8s-deploy
-
-  k8s-remove
+  k8s-create
+  k8s-delete
 
   reset           恢复原始状态
 
@@ -47,8 +42,6 @@ Read './docs/*.md' for more information about CLI commands.
 You can open issue in [ https://github.com/khs1994-docker/ci/issues ] when you meet problems.
 
 You must Update .env file when update this project.
-
-Donate https://zan.khs1994.com
 "
 }
 
@@ -100,7 +93,7 @@ _reset(){
 }
 
 _change_mysql_root_password(){
- echo 1
+ echo "Please edit ./secrets/mysql.env"
 }
 
 _sed_common(){

@@ -33,7 +33,7 @@
 首次使用本项目时，务必执行以下命令完成初始化。
 
 ```bash
-$ ./ci.sh
+$ ./ci
 ```
 
 ### 编辑 `.env` 文件
@@ -49,7 +49,7 @@ $ ./ci.sh
 * 已占用->实体机运行 NGINX
 
   ```bash
-  $ ./ci.sh up-tls --use-external-nginx=/etc/nginx/conf.d
+  $ ./ci up-tls --use-external-nginx=/etc/nginx/conf.d
   ```
 
   重启 NGINX (`--use-external-nginx` 后边的路径为 NGINX 配置文件所在路径，必须为绝对路径，下同)
@@ -57,7 +57,7 @@ $ ./ci.sh
 * 已占用->容器运行 NGINX
 
   ```bash
-  $ ./ci.sh up-tls --use-external-nginx=/etc/nginx/conf.d
+  $ ./ci up-tls --use-external-nginx=/etc/nginx/conf.d
   ```
 
   重启 NGINX 容器
@@ -65,5 +65,5 @@ $ ./ci.sh
 * 未占用
 
   ```bash
-  $ ./ci.sh up-tls [-d] [--reset]
+  $ ./ci up-tls [-d] [--reset]
   ```
