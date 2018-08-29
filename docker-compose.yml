@@ -1,4 +1,4 @@
-version: "3.6"
+version: "3.7"
 
 #
 # This file is override by docker-compose.override.yml
@@ -14,7 +14,7 @@ services:
 
   drone-server:
     << : *default-common
-    image: drone/drone:${CI_DRONE_VERSION:-0.8.5}
+    image: drone/drone:${CI_DRONE_VERSION:-0.8.6}
     ports:
       # - 80:80
       # - 443:443
@@ -28,7 +28,7 @@ services:
 
   drone-agent:
     << : *default-common
-    image: drone/agent:${CI_DRONE_VERSION:-0.8.5}
+    image: drone/agent:${CI_DRONE_VERSION:-0.8.6}
     depends_on:
       - drone-server
     volumes:
@@ -66,7 +66,7 @@ services:
 
   mysql:
     << : *default-common
-    image: mysql:${CI_MYSQL_VERSION:-8.0.3}
+    image: mysql:${CI_MYSQL_VERSION:-8.0.12}
     env_file: secrets/mysql.env
     volumes:
       - mysql-data:/var/lib/mysql:rw
@@ -74,13 +74,13 @@ services:
 
   redis:
     << : *default-common
-    image: redis:${CI_REDIS_VERSION:-4.0.9}-alpine
+    image: redis:${CI_REDIS_VERSION:-5.0-rc4}-alpine
     volumes:
       - redis-data:/data
 
   nginx:
     << : *default-common
-    image: nginx:${CI_NGINX_VERSION:-1.13.11}-alpine
+    image: khs1994/nginx:${CI_NGINX_VERSION:-1.15.3}-alpine
     networks:
       - frontend
     ports:

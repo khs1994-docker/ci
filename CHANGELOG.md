@@ -1,3 +1,5 @@
+* `Docker Compose` `1.22.0` `3.7`
+
 * 合并 compose 文件，通过 `CI-CLI` 控制
 
 * `Docker Compose` `1.20.1` `3.6`
