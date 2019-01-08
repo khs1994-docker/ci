@@ -1,12 +1,27 @@
 # 私有化 CI/CD 解决方案 (TLS)
 
-[![GitHub stars](https://img.shields.io/github/stars/khs1994-docker/ci.svg?style=social&label=Stars)](https://github.com/khs1994-docker/ci) [![star](https://gitee.com/khs1994-docker/ci/badge/star.svg?theme=dark)](https://gitee.com/khs1994-docker/ci/stargazers)
+[![GitHub stars](https://img.shields.io/github/stars/khs1994-docker/ci.svg?style=social&label=Stars)](https://github.com/khs1994-docker/ci) [![star](https://gitee.com/khs1994-docker/ci/badge/star.svg?theme=dark)](https://gitee.com/khs1994-docker/ci/stargazers) [![](https://img.shields.io/badge/AD-%E8%85%BE%E8%AE%AF%E4%BA%91%E5%AE%B9%E5%99%A8%E6%9C%8D%E5%8A%A1-blue.svg)](https://cloud.tencent.com/redirect.php?redirect=10058&cps_key=3a5255852d5db99dcd5da4c72f05df61)
 
 * [支持文档](docs)
 
 * [问题反馈](https://github.com/khs1994-docker/ci/issues)
 
 * [更多信息](https://www.khs1994.com/categories/CI/Drone/)
+
+## 重要提示
+
+本项目基于 Drone `0.8.x` 版本，近期 Drone 发布了 `1.x` 版本与本项目不兼容！
+
+* `0.8.x` 文档 `https://0-8-0.docs.drone.io/`
+* `1.x` 文档 `https://docs.drone.io/`
+
+## 微信订阅号
+
+<p align="center">
+<img width="200" src="https://user-images.githubusercontent.com/16733187/46847944-84a96b80-ce19-11e8-9f0c-ec84b2ac463e.jpg">
+</p>
+
+<p align="center"><strong>关注项目作者微信订阅号，接收项目最新动态</strong></p>
 
 ## 内部端口
 
@@ -20,7 +35,7 @@
 
 * 域名
 
-* 公网 IP
+* 公网 IP (推荐，但不是必须)
 
 * `*.CI_DOMAIN` 通配符 TLS 证书 （acme.sh 可以免费申请）或 `git.CI_DOMAIN` `drone.CI_DOMAIN` 网址的 TLS 证书。
 
@@ -96,7 +111,7 @@ $ lnmp-docker restart nginx
   $ ./ci up-tls --use-external-nginx=/etc/nginx/conf.d
   ```
 
-  重启 NGINX (`--use-external-nginx` 后边的路径为 NGINX 配置文件所在路径，必须为绝对路径，下同)
+  重启 NGINX (`--use-external-nginx` 后边的路径为 NGINX 配置文件所在路径，必须为绝对路径)
 
 * 已占用->容器运行 NGINX
 
@@ -107,7 +122,8 @@ $ lnmp-docker restart nginx
   重启 NGINX 容器
 
 * 未占用
-  `.env` 文件
+
+  编辑 `.env` 文件
 
   ```bash
   CI_INCLUDE="gogs nginx redis mysql"
@@ -121,8 +137,7 @@ $ lnmp-docker restart nginx
 
 假设 `CI_DOMAIN` 设置为 `t.khs1994.com`
 
-则 Drone 访问地址为 `https://drone.t.khs1994.com`
-则 Gogs 访问地址为 `https://git.t.khs1994.com`
+则 Drone 访问地址为 `https://drone.t.khs1994.com`,Gogs 访问地址为 `https://git.t.khs1994.com`
 
 ## 错误排查
 
