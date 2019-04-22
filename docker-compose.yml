@@ -14,24 +14,21 @@ services:
 
   drone-server:
     << : *default-common
-    image: drone/drone:${CI_DRONE_VERSION:-1.0.1}
+    image: drone/drone:${CI_DRONE_VERSION:-0.8.7}
     ports:
       # - 80:80
       # - 443:443
-      - "${CI_HOST:-192.168.199.100}:${CI_DRONE_PORT:-8000}:80"
+      - "${CI_HOST:-192.168.199.100}:${CI_DRONE_PORT:-8000}:8000"
       # - 9000:9000
     volumes:
-      - drone-data-v1:/var/lib/drone/:rw
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
+      - drone-data:/var/lib/drone/:rw
     networks:
       - frontend
       - backend
 
   drone-agent:
     << : *default-common
-    image: drone/agent:${CI_DRONE_VERSION:-1.0.1}
+    image: drone/agent:${CI_DRONE_VERSION:-0.8.7}
     depends_on:
       - drone-server
     volumes:
@@ -39,8 +36,8 @@ services:
         source: /var/run/docker.sock
         target: /var/run/docker.sock
     environment:
-      - DRONE_RPC_SECRET=${DRONE_RPC_SECRET}
-      - DRONE_RPC_SERVER=drone-server:9000
+      - DRONE_SECRET=${DRONE_SECRET}
+      - DRONE_SERVER=drone-server:9000
 
   gogs:
     << : *default-common
@@ -100,7 +97,7 @@ volumes:
   gogs-data:
   redis-data:
   mysql-data:
-  drone-data-v1:
+  drone-data:
   registry-data:
 
 networks:
