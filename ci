@@ -128,7 +128,7 @@ _up(){
     sed -i "s#{{ WEBHOOKS_HOST }}#${WEBHOOKS_HOST:-http://192.168.199.100}#g" registry/config.yml
     cd - > /dev/null
     _up_sed
-    CI_INCLUDE=${CI_INCLUDE:-drone-server drone-agent gogs registry}
+    CI_INCLUDE=${CI_INCLUDE-drone-server drone-agent gogs registry}
 
    # based posrt don't up nginx
 
@@ -214,7 +214,7 @@ _up-tls(){
 
     test "$ENABLE_NGINX" = 'FALSE' || _sed_nginx
 
-    docker-compose ${COMPOSE_FILE:-} up ${opt:-} ${CI_INCLUDE:-gogs registry} \
+    docker-compose ${COMPOSE_FILE:-} up ${opt:-} ${CI_INCLUDE-gogs registry} \
       drone-server drone-agent
 }
 
