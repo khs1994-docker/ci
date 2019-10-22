@@ -246,7 +246,7 @@ if [ $OS = 'Darwin' -a ! -f /usr/local/opt/gnu-sed/libexec/gnubin/sed ];then
   exit 1
 fi
 
-if [ $GOOS = 'darwin' ];then
+if [ $OS = 'Darwin' ];then
   alias sed=gsed
 fi
 
