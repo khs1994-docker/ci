@@ -4,5 +4,5 @@
 
 ```
 $ docker run --rm --entrypoint htpasswd \
-    httpd:alpine -mbn username password > nginx.htpasswd
+    registry:2 -mbn username password > nginx.htpasswd
 ```
